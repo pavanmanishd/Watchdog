@@ -1,0 +1,26 @@
+<!-- client.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Camera Feed Viewer</title>
+  </head>
+  <body>
+    <h1>Camera Feed Viewer</h1>
+    <img
+      id="video_frame"
+      width="640"
+      height="480"
+      style="border: 2px solid black"
+    />
+    <script>
+      const socket = new WebSocket("ws://127.0.0.1:8000/ws/video");
+
+      // Handle video frame updates from the server
+      socket.onmessage = (event) => {
+        const frameBase64 = event.data;
+        const img = document.getElementById("video_frame");
+        img.src = "data:image/jpeg;base64," + frameBase64;
+      };
+    </script>
+  </body>
+</html>
