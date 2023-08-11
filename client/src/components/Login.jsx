@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import config from "../config/index";
-import styles from "../styles/Login.module.css";
+import "../styles/Auth.styles.css";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +18,6 @@ export default function Login() {
       }),
     });
     const data = await response.json();
-    // console.log(data)
     if (data.status === true) {
       alert("Login Successful");
       localStorage.setItem("token", data.token);
@@ -27,38 +26,51 @@ export default function Login() {
       alert("Login Failed : please check your email and password");
     }
   };
+
   return (
-    <body className={styles.body}>
-      <div className={styles.container}>
-        <div className={styles.login_box}>
-          <h1 className={styles.heading}>Login</h1>
+    <div className="container1">
+      <div className="container">
+        <div className="github-logo">
+          <i className="fa-brands fa-github"></i>
+        </div>
+        <h1 className="github-head">Sign in to Surveillance</h1>
+        <div className="login-wrapper">
           <form onSubmit={loginUser}>
-            <div className={styles.input_group}>
-              <label htmlFor="username" className={styles.label}>Username</label>
+            <div className="input-box">
+              <div className="input-label">Email</div>
               <input
                 id="email"
                 type="text"
-                placeholder="email"
+                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={styles.input_field}
               />
             </div>
-            <div>
-              <label htmlFor="password" className={styles.label} >Password</label>
+            <div className="input-box">
+              <div className="input-label">
+                <span>Password</span>
+                {/* <a href="github-login-page/">Forgot password?</a> */}
+              </div>
               <input
                 name="password"
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={styles.input_field}
               />
             </div>
-            <button type="submit" className={styles.btn}>Login</button>
+            <button type="submit" className="submit-btn">
+              Login
+            </button>
           </form>
         </div>
+        <div className="info">
+          <span>
+            New to Surveillance?{" "}
+            <a href="signup/">Create an account.</a>
+          </span>
+        </div>
       </div>
-    </body>
+    </div>
   );
 }
