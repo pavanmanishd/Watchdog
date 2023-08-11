@@ -1,0 +1,238 @@
+/* import fonts  */
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+
+/* color variables  */
+
+:root {
+    --primary-green: #2DA44E;
+    --primary-dark: #1f6feb;
+    --primary-light: #29c753;
+    --fade-light: #21262d;
+    --border-color: #30363d;
+}
+
+/* default properties  */
+a {
+    text-decoration: none;
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    /* font-family: 'Poppins', sans-serif; */
+	font-family:-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+	
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+    background-color: #0D1117;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 350px;
+    height: 500px;
+    align-items: center;
+}
+
+.github-logo {
+    /* border: 1px solid black; */
+    margin-bottom: 20px;
+	color: #E6EDf3;
+}
+
+.github-logo i {
+    font-size: 50px;
+	color: #E6EDf3;
+	caret-color: transparent;
+}
+
+.github-head {
+    font-size: 28px;
+	color: #E6EDf3;
+	font-weight: 200;
+	caret-color: transparent;
+
+}
+
+.login-wrapper {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    padding: 25px 15px;
+    border-radius: 5px;
+    /* background-color: var(--fade-light); */
+	background-color: #161B22;
+    margin-top: 40px;
+}
+
+.input-box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 20px;
+	/* caret-color: #E6EDf3; */
+}
+
+.input-label {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 15px;
+	  color: #E6EDf3;
+    
+	/* caret-color: #E6EDf3; */
+	caret-color: transparent;
+}
+/* dashboard.css */
+/* ... (existing styles) */
+
+.input,select,textarea,input::placeholder {
+  color: #e6edf3;
+}
+/* styles.css */
+/* ... (existing styles) */
+
+.input-box input {
+  color: white; /* Set the text color to white */
+}
+
+/* ... (existing styles) */
+
+
+/* ... (existing styles) */
+
+/* dashboard.css */
+/* ... (existing styles) */
+
+/* Navigation links and cameras list styles */
+.nav-links,
+.cameras-list {
+  display: flex;
+  align-items: center;
+
+}
+
+.cameras-label {
+  margin-right: 10px;
+
+}
+
+.camera-select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.camera-select:hover,
+.camera-select:focus {
+  border-color: #555;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ... (existing styles) */
+
+input {
+    width: 100%;
+    outline: none;
+    margin-top: 5px;
+    font-size: 16px;
+    padding: 4px 6px;
+    border-radius: 5px;
+	border: 1px solid var(--border-color);
+	background-color: #0D1117;
+	/* caret-color: #E6EDf3; */
+}
+
+input:focus {
+	border: 1px solid var(--primary-dark);
+	caret-color: #E6EDf3;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 5px 0px;
+    font-size: 18px;
+    background-color:#1DA1F2;
+    
+    border: none;
+	font-weight: 500;
+    border-radius: 5px;
+    /* color: var(--primary-light); */
+	color: #E6EDf3;
+    cursor: pointer;
+    transition: all 0.2s linear;
+}
+
+.submit-btn:hover {
+    transform: translateY(-1px);
+}
+
+.info {
+    font-size: 15px;
+    margin-top: 35px;
+    border: 1px solid var(--border-color);
+    padding: 20px 15px;
+    width: 100%;
+    border-radius: 5px;
+    text-align: center;
+    background-color:#0d1117f2;
+	color: #E6EDf3;
+	caret-color: transparent;
+}
+/* dashboard.css */
+/* ... (existing styles) */
+
+
+
+/* ... (existing styles) */
+
+
+.info a,.input-box a {
+    color: #2F81F7;
+    
+}
+.dev-info{
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%,0%);
+}
+
+
+@media screen and (max-width:360px) {
+    body {
+        padding: 0px 10px;
+    }
+
+    .info {
+        font-size: 14px;
+        padding: 17px 10px;
+    }
+
+    .input-label {
+        font-size: 14px;
+    }
+}
