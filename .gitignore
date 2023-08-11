@@ -1,8 +1,8 @@
-/server/node_modules
+/auth/node_modules
 
-/server/.env
+/auth/.env
 
-
+todo.txt
 
 /client/node_modules
 /client/.pnp
@@ -17,3 +17,9 @@
 /client/npm-debug.log*
 /client/yarn-debug.log*
 /client/yarn-error.log*
+
+
+/server/node_modules
+/server/.env
+
+/server/uploads
