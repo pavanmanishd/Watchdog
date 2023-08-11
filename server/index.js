@@ -104,6 +104,9 @@ function update_model(image, criminalName) {
             });
         }
         )
+        .catch((error) => {
+            console.log(error);
+        });
 }
 
 
