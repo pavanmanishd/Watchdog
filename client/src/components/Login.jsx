@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import config from "../config/index";
+import styles from "../styles/Login.module.css";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,25 +28,37 @@ export default function Login() {
     }
   };
   return (
-    <div>
-      <h1>Login</h1>
-      <div>
-        <form onSubmit={loginUser}>
-          <input
-            type="text"
-            placeholder="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="submit">Login</button>
-        </form>
+    <body className={styles.body}>
+      <div className={styles.container}>
+        <div className={styles.login_box}>
+          <h1 className={styles.heading}>Login</h1>
+          <form onSubmit={loginUser}>
+            <div className={styles.input_group}>
+              <label htmlFor="username" className={styles.label}>Username</label>
+              <input
+                id="email"
+                type="text"
+                placeholder="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={styles.input_field}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className={styles.label} >Password</label>
+              <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={styles.input_field}
+              />
+            </div>
+            <button type="submit" className={styles.btn}>Login</button>
+          </form>
+        </div>
       </div>
-    </div>
+    </body>
   );
 }
