@@ -33,7 +33,7 @@ export default function Login() {
         <div className="github-logo">
           <i className="fa-brands fa-github"></i>
         </div>
-        <h1 className="github-head">Sign in to Surveillance</h1>
+        <h1 className="github-head">Log in</h1>
         <div className="login-wrapper">
           <form onSubmit={loginUser}>
             <div className="input-box">
@@ -67,7 +67,7 @@ export default function Login() {
         <div className="info">
           <span>
             New to Surveillance?{" "}
-            <a href="signup/">Create an account.</a>
+            <a href="/signup/">Create an account.</a>
           </span>
         </div>
       </div>
