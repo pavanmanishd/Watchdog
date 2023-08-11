@@ -1,14 +1,24 @@
-const express = require('express');
-const app = express();
-const cors = require('cors')
+const express = require("express");
+const http = require("http");
+const WebSocket = require("ws");
+const cors = require('cors');
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+const axios = require("axios");
 const mysql = require('mysql2');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
+require('dotenv').config();
+const app = express();
 app.use(cors())
-app.use(express.static('public'));
+app.use(express.static("public"));
 app.use(express.json());
 
+
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+// connect to database
 const db = mysql.createConnection({
     host: 'localhost',
     user: process.env.MYSQL_USERNAME,
@@ -16,82 +26,109 @@ const db = mysql.createConnection({
     database: 'hacktopiaDB'
 });
 
+// connect to frontend to receive criminal upload data
+wss.on("connection", (ws) => {
+    console.log("WebSocket client connected");
 
-app.get('/', (req, res) => res.send('Hello World!'));
+    ws.on("message", (data) => {
+        const criminalData = JSON.parse(data);
 
-app.post('/signup', (req, res) => {
-    const { username, password, email } = req.body;
-    const sqlInsert = 'INSERT INTO UsersAuth (username, password, email) VALUES (?, ?, ?)';
-    db.query(sqlInsert, [username, password, email], (err, result) => {
-        if (err) {
-            res.json({ status: false });
+        // Save the image to a directory
+        const image = criminalData.image;
+        const criminalName = criminalData.criminalName;
+        const imageBuffer = Buffer.from(image, "base64");
+        const imagePath = path.join(__dirname, "uploads", `${criminalName}.jpg`);
+
+        // if directory does not exist, create it
+        if (!fs.existsSync(path.join(__dirname, "uploads"))) {
+            fs.mkdirSync(path.join(__dirname, "uploads"));
         }
-        // console.log(result);
-        res.json({ status: true });
+
+        // insert criminal data into database
+        const sqlInsert = 'INSERT INTO CriminalData (name, age, height, weight, description) VALUES (?, ?, ?, ?, ?)';
+        db.query(sqlInsert, [criminalData.criminalName, criminalData.criminalAge, criminalData.criminalHeight, criminalData.criminalWeight, criminalData.criminalDescription], (err, result) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            else {
+                console.log("Criminal data inserted into database");
+            }
+        });
+
+        // store in uploads folder
+        fs.writeFile(imagePath, imageBuffer, (err) => {
+            if (err) {
+                console.error("Error saving image:", err);
+                return;
+            } else {
+                console.log("Image saved:", imagePath);
+            }
+        });
+
+
+        // Process other criminal data
+        console.log("Criminal Details:");
+        console.log(`Name: ${criminalData.criminalName}`);
+        console.log(`Age: ${criminalData.criminalAge}`);
+        console.log(`Height: ${criminalData.criminalHeight}`);
+        console.log(`Weight: ${criminalData.criminalWeight}`);
+        console.log(`Description: ${criminalData.criminalDescription}`);
+
+        update_model(criminalData.image,criminalData.criminalName);
+
+    });
+
+    ws.on("close", () => {
+        console.log("WebSocket client disconnected");
     });
 });
 
-app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    // console.log(email, password)
-    const sqlSelect = 'SELECT * FROM UsersAuth WHERE email = ? AND password = ?';
-    db.query(sqlSelect, [email, password], (err, result) => {
-        if (err) {
-            res.json({ status: false, token: null });
-        }
-        // console.log(result);
-        if (result.length == 0) {
-            res.json({ status: false, token: null });
-        }
-        else {
-            const token = jwt.sign({
-                username: result[0].username,
-                email: email
-            },
-                process.env.JWT_KEY,
-            );
-            const sqlUpdate = 'UPDATE UsersAuth SET token = ? WHERE email = ?';
-            db.query(sqlUpdate, [token, email], (err, result) => {
-                if (err) {
-                    console.log(err);
-                    res.json({ status: false, token: null });
-                }
-                else {
-                    res.json({ status: true, token: token });
+
+// send criminal data to model
+function update_model(image, criminalName) {
+    const model_api_url = "http://192.168.0.106:8000/add_criminal";
+    axios.post(model_api_url, {
+        image: image,
+        criminalName: criminalName
+    })
+        .then((response) => {
+            console.log(response.data);
+            const data = response.data.message;
+            const message = `Criminal data sent to model: ${data}`;
+            console.log(message);
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(message);
                 }
             });
         }
+        )
+}
+
+
+// notifies the frontend that an enocunter has been detected
+app.get("/notify", (req, res) => {
+    console.log("Request received from another server");
+    // const data = req.body;
+    const message = `Request received from another server`;
+    counter++;
+    console.log(message);
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(message);
+        }
     });
+    res.send(message);
 });
 
-app.get("/api/token", (req, res) => {
-    const token = req.headers['x-access-token'];
-    // console.log(token)
-    if (!token) {
-        res.json({ status: false, message: 'No token provided' });
-    }
-    else {
-        jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
-            if (err) {
-                res.json({ status: false, message: 'Failed to authenticate token', token: null });
-            }
-            else {
-                const email = decoded.email;
-                const sqlSelect = 'SELECT * FROM UsersAuth WHERE email = ?';
-                db.query(sqlSelect, [email], (err, result) => {
-                    if (err) {
-                        res.json({ status: false, message: 'Failed to authenticate token', token: null });
-                    }
-                    else {
-                        res.json({ status: true, message: 'Success', token: result[0].token });
-                    }
-                }
-                );
-            }
-        });
-    }
+server.listen(3001, () => {
+    console.log("Backend server is running on port 3001");
 });
 
-
-
-app.listen(8000, () => console.log('Server listening on port 8000!'));
+// restart the server when crashed
+process.on("uncaughtException", () => {
+    console.log("Process exited");
+    process.exit(1);
+}
+);
