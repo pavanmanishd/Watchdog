@@ -126,6 +126,38 @@ app.get("/notify", (req, res) => {
     res.send(message);
 });
 
+app.get("/cameras", (req, res) => {
+    const model_api_url = "http://192.168.0.106:8000/get_cameras";
+    axios.get(model_api_url)
+        .then((response) => {
+            console.log(response.data);
+            const data = response.data;
+            res.send(data);
+        }
+        )
+        .catch((error) => {
+            console.log(error);
+        }
+        );
+});
+
+app.get("/cameras/:id", (req, res) => {
+    const id = req.params.id;
+    const model_api_url = "http://192.168.0.106:8000/get_cameras";
+    axios.get(model_api_url)
+        .then((response) => {
+            console.log(response.data);
+            const data = response.data[id];
+            // const result = data.
+            res.send(data);
+        }
+        )
+        .catch((error) => {
+            console.log(error);
+        }
+        );
+});
+
 server.listen(3001, () => {
     console.log("Backend server is running on port 3001");
 });

@@ -4,12 +4,13 @@ import '../styles/Auth.home.css';
 import { FaHome } from 'react-icons/fa'; // Import FaHome icon
 export default function Home() {
 
-  const cameras = ['Cam 1', 'Cam 2', 'Cam 3', 'Cam 4', 'Cam 5'];
-  const [selectedCamera, setSelectedCamera] = useState(cameras[0]);
+  // const cameras = ['Cam 1', 'Cam 2', 'Cam 3', 'Cam 4', 'Cam 5'];
+  // const [selectedCamera, setSelectedCamera] = useState(cameras[0]);
 
-  const handleCameraChange = (event) => {
-    setSelectedCamera(event.target.value);
-  };
+  // const handleCameraChange = (event) => {
+  //   setSelectedCamera(event.target.value);
+  // };
+  const [isLogged, setIsLogged] = useState(false);
   const history = useHistory();
   const handleLogin = () => {
     console.log("login");
@@ -31,6 +32,8 @@ export default function Home() {
       history.push("/login");
     } else {
       console.log('token is valid')
+      console.log(data)
+      setIsLogged(true);
     }
   };
   useEffect(() => {
@@ -50,7 +53,7 @@ export default function Home() {
         </div>
 
       <nav className="nav-links">
-          <div className="cameras-list">
+          {/* <div className="cameras-list">
             <span className="cameras-label">Cameras: </span>
             <select
               className="camera-select"
@@ -63,13 +66,13 @@ export default function Home() {
                 </option>
               ))}
             </select>
-          </div>
-          <a href="/live-cam" className="nav-link">
-            Live Cam
+          </div> */}
+          <a href="/allcameras" className="nav-link">
+            Live Camera Feed
           </a>
-          <a href="/live-cam-category" className="nav-link">
+          {/* <a href="/live-cam-category" className="nav-link">
             Live Cam by Category
-          </a>
+          </a> */}
         </nav>
         </header>
 
@@ -79,12 +82,12 @@ export default function Home() {
         <p className="dashboard-description">
           Enhancing Security with Real-time Object Detection and Facial Recognition
         </p>
-        <div className="dashboard-buttons">
+        {!isLogged && <div className="dashboard-buttons">
           <button onClick={handleLogin}>Login</button>
 
           <p>|        |</p>
           <button onClick={handleSignUp}>Sign Up</button>
-        </div>
+        </div>}
       </div>
     </div>
 
