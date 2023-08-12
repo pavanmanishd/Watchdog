@@ -25,12 +25,17 @@ export default function CriminalList() {
       <div>
         {criminals.map((criminal, index) => (
           <div key={index} onClick={() => handleClick(criminal.name)}>
-            <h4>Name : {criminal.name}</h4>
-            <span>Age : {criminal.age} </span>
-            <span>Height : {criminal.height} </span>
-            <span>Weight : {criminal.weight} </span>
-            <span>Description : {criminal.description}</span>
-            <hr />
+            <div>
+                <img src={"http://localhost:3001/criminals/" + criminal.name + "/image"} height="100px" style={{ border: "2px solid black" }} alt="Criminal Image" />
+            </div>
+            <div>
+              <h4>Name : {criminal.name}</h4>
+              <span>Age : {criminal.age} </span>
+              <span>Height : {criminal.height} </span>
+              <span>Weight : {criminal.weight} </span>
+              <span>Description : {criminal.description}</span>
+            </div>
+            {/* <hr /> */}
           </div>
         ))}
       </div>
