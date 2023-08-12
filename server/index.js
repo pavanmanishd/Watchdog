@@ -76,7 +76,7 @@ wss.on("connection", (ws) => {
         console.log(`Weight: ${criminalData.criminalWeight}`);
         console.log(`Description: ${criminalData.criminalDescription}`);
 
-        update_model(criminalData.image,criminalData.criminalName);
+        update_model(criminalData.image, criminalData.criminalName);
 
     });
 
@@ -157,6 +157,61 @@ app.get("/cameras/:id", (req, res) => {
         }
         );
 });
+
+app.get("/criminals", (req, res) => {
+    const sqlSelect = 'SELECT * FROM CriminalData';
+    db.query(sqlSelect, (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            console.log(result);
+            res.send(result);
+        }
+    }
+    );
+});
+
+app.get("/criminals/:name", (req, res) => {
+    const name = req.params.name;
+    console.log(name);
+    const sqlSelect = `SELECT * FROM CriminalData WHERE name = "${name}"`;
+    console.log(sqlSelect);
+    db.query(sqlSelect, [], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            console.log(result);
+            res.send(result[0]);
+        }
+    }
+    );
+});
+
+app.get("/criminals/:name/image", (req, res) => {
+    const name = req.params.name;
+    console.log(name);
+    const imagePath = path.join(__dirname, "uploads", `${name}.jpg`);
+    console.log(imagePath);
+    fs.readFile(imagePath, (err, data) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+            res.end(data);
+        }
+    }
+    );
+});
+
+
+
+
 
 server.listen(3001, () => {
     console.log("Backend server is running on port 3001");

@@ -8,6 +8,8 @@ import Encounters from "./components/Encounters";
 import Add from "./components/Add";
 import AllCameras from "./components/AllCameras";
 import Video_http from "./components/Video_http";
+import CriminalList from "./components/CriminalList";
+import Criminal from "./components/Criminal";
 function App() {
   return (
     <div>
@@ -39,6 +41,12 @@ function App() {
         </Route>
         <Route exact path="/video/:id" >
           <Video_http />
+        </Route>
+        <Route exact path="/criminals">
+          <CriminalList />
+          </Route>
+          <Route exact path="/criminals/:name">
+          <Criminal />
         </Route>
       </Switch>
     </div>
