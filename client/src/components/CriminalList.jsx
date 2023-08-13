@@ -42,7 +42,7 @@ export default function CriminalList() {
     );
   };
   return (
-    <div style={{ height: "100%", width: "100vw" }}>
+    <div>
       <h2>All Criminals</h2>
       <hr />
       <CriminalsList />

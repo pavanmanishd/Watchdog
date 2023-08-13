@@ -12,8 +12,8 @@ require('dotenv').config();
 const app = express();
 app.use(cors())
 app.use(express.static("public"));
-app.use(express.json());
-
+app.use(express.json({ limit: "200mb" }));
+app.use(express.urlencoded({ limit: "200mb", extended: true }));
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
@@ -112,19 +112,102 @@ function update_model(image, criminalName) {
 
 
 // notifies the frontend that an enocunter has been detected
-app.get("/notify", (req, res) => {
-    console.log("Request received from another server");
-    // const data = req.body;
-    const message = `Request received from another server`;
-    counter++;
-    console.log(message);
-    wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(message);
+// app.post("/notify", async (req, res) => {
+//     const data = req.body[0];
+
+//     if (!fs.existsSync(path.join(__dirname, "encounters"))) {
+//         fs.mkdirSync(path.join(__dirname, "encounters"));
+//     }
+//     if (!fs.existsSync(path.join(__dirname, "encounters", `${data.name}`))) {
+//         fs.mkdirSync(path.join(__dirname, "encounters", `${data.name}`));
+//     }
+//     const imagePath = path.join(__dirname, "encounters", `${data.name}`, `${data.timestamp.replace(" ", "_")}.jpg`);
+//     const imageBuffer = Buffer.from(data.image, "base64");
+//     fs.writeFile(imagePath, imageBuffer, "base64")
+//         .then(() => {
+//             console.log("Image saved:", imagePath);
+//         })
+//         .catch((err) => {
+//             console.error("Error saving image:", err);
+//         });
+
+//     const sqlInsert = 'INSERT INTO Encounters (name, confidence, timestamp, url,location, camera_id, filepath) VALUES (?, ?, ?, ?, ?, ?, ?)';
+//     db.query(sqlInsert, [data.name, data.confidence, data.timestamp, data.camerasocketurl, data.location, data.camera_id, imagePath], (err, result) => {
+//         if (err) {
+//             console.log("Error inserting encounter data into database");
+//             console.log(err);
+//             return;
+//         }
+//         else {
+//             console.log("Encounter data inserted into database");
+//         }
+//     });
+
+//     const message = `Encounter detected`;
+//     wss.clients.forEach((client) => {
+//         if (client.readyState === WebSocket.OPEN) {
+//             client.send({
+//                 name: data.name,
+//                 // confidence: data.confidence,
+//                 timestamp: data.timestamp,
+//                 // url: data.camerasocketurl,
+//                 location: data.location,
+//                 camera_id: data.camera_id,
+//             });
+//         }
+//     });
+//     res.send(message);
+// });
+
+
+app.post("/notify", async (req, res) => {
+    try {
+        const data = req.body[0];
+
+        if (!fs.existsSync(path.join(__dirname, "encounters"))) {
+            await fs.promises.mkdir(path.join(__dirname, "encounters"), { recursive: true });
         }
-    });
-    res.send(message);
+        if (!fs.existsSync(path.join(__dirname, "encounters", data.name))) {
+            await fs.promises.mkdir(path.join(__dirname, "encounters", data.name), { recursive: true });
+        }
+
+        const imagePath = path.join(__dirname, "encounters", data.name, `${data.timestamp.replace(" ", "_")}.jpg`);
+        const imageBuffer = Buffer.from(data.image, "base64");
+        await fs.promises.writeFile(imagePath, imageBuffer, "base64");
+        console.log("Image saved:", imagePath);
+
+        const sqlInsert = 'INSERT INTO Encounters (name, confidence, timestamp, url, location, camera_id, filepath) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        db.query(sqlInsert, [data.name, data.confidence, data.timestamp, data.camerasocketurl, data.location, data.camera_id, imagePath], (err, result) => {
+            if (err) {
+                console.log("Error inserting encounter data into database");
+                console.log(err);
+            } else {
+                console.log("Encounter data inserted into database");
+            }
+        });
+
+        const message = { 
+            name: data.name,
+            timestamp: data.timestamp,
+            location: data.location,
+            camera_id: data.camera_id,
+        };
+
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(message));
+            }
+        });
+
+        res.send("Encounter detected");
+    } catch (error) {
+        console.error("An error occurred:", error);
+        res.status(500).send("An error occurred");
+    }
 });
+
+
+
 
 app.get("/cameras", (req, res) => {
     const model_api_url = "http://192.168.0.106:8000/get_cameras";
@@ -210,6 +293,53 @@ app.get("/criminals/:name/image", (req, res) => {
 });
 
 
+app.get("/encounters/:name/:date/:hr/:min/:sec", (req, res) => {
+    const { name, date, hr,min,sec } = req.params;
+    const timestamp = `${date} ${hr}:${min}:${sec}`;
+    const sqlSelect = `SELECT * FROM Encounters WHERE name = "${name}" AND timestamp = "${timestamp}"`;
+    console.log(sqlSelect);
+    db.query(sqlSelect, [], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            // console.log(result);
+            res.send(result[0]);
+        }
+    }
+    );
+});
+
+app.get("/encounters/:name/:date/:hr/:min/:sec/image", (req, res) => {
+    const { name, date, hr,min,sec } = req.params;
+    const timestamp = `${date} ${hr}:${min}:${sec}`;
+    const sqlSelect = `SELECT filepath FROM Encounters WHERE name = "${name}" AND timestamp = "${timestamp}"`;
+    console.log(sqlSelect);
+    db.query(sqlSelect, [], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            // console.log(result);
+            const imagePath = result[0].filepath;
+            // read file from path
+            fs.readFile(imagePath, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                else {
+                    res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+                    res.end(data);
+                }
+            }
+            );
+        }
+    }
+    );
+});
 
 
 
