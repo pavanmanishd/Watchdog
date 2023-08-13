@@ -1,6 +1,6 @@
 import  { useEffect ,useState} from "react";
 import {useHistory} from "react-router-dom";
-// import '../styles/Auth.home.css';
+ import '../styles/Auth.home.css';
 import { FaHome } from 'react-icons/fa'; // Import FaHome icon
 export default function Home() {
   const [isLogged, setIsLogged] = useState(false);
@@ -38,9 +38,9 @@ export default function Home() {
     return (
 
 
-<div className="dashboard-container">
+<div className=" dashboard-container">
       {/* Header */}
-    <header   className="header">
+    <header   className="headerh">
     <div className="logo">
           <FaHome className="home-icon" /> {/* Home Icon */}
         </div>
@@ -61,9 +61,11 @@ export default function Home() {
         {!isLogged && <div className="dashboard-buttons">
           <button onClick={handleLogin}>Login</button>
 
-          <p>|        |</p>
+          <p>  </p>
           <button onClick={handleSignUp}>Sign Up</button>
-        </div>}
+        </div>
+        
+        }
       </div>
     </div>
 

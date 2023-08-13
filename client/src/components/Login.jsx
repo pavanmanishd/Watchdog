@@ -49,6 +49,7 @@ export default function Login() {
     //     </form>
     //   </div>
     // </div>
+     <div className="custom-body">
     <div className="container">
       <div className="github-logo">
         <i className="fa-brands fa-github"></i>
@@ -61,6 +62,7 @@ export default function Login() {
             <input
               required
               type="text"
+              className="inpute"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -73,6 +75,7 @@ export default function Login() {
             <input
               required
               type="password"
+              className="inputp"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -88,6 +91,7 @@ export default function Login() {
       New to Surveillance? <a href="/signup/">Create an account.</a>
       </span>
       </div>
+    </div>
     </div>
   );
 }

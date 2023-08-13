@@ -1,6 +1,12 @@
 /* import fonts  */
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@100;300;400;700&display=swap');
+@property --rotate {
+  syntax: "<angle>";
+  initial-value: 132deg;
+  inherits: false;
+}
 
 /* color variables  */
 
@@ -13,7 +19,7 @@
 }
 
 /* default properties  */
-/* a {
+ a {
     text-decoration: none;
 }
 
@@ -26,8 +32,16 @@
   -moz-osx-font-smoothing: grayscale;
 	
 }
-
+/* Remove top margin from body element */
 body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  
+
+
+.custom-body {
     width: 100%;
     height: 100vh;
     display: flex;
@@ -37,9 +51,8 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
     -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  
-} */
+    -moz-osx-font-smoothing: grayscale;
+  }
 
 .container {
     display: flex;
@@ -50,17 +63,9 @@ body {
     align-items: center;
 }
 
-.github-logo {
-    /* border: 1px solid black; */
-    margin-bottom: 20px;
-	color: #E6EDf3;
-}
 
-.github-logo i {
-    font-size: 50px;
-	color: #E6EDf3;
-	caret-color: transparent;
-}
+
+
 
 .github-head {
     font-size: 28px;
@@ -152,7 +157,9 @@ body {
 
 /* ... (existing styles) */
 
-/* input {
+
+
+.inpute{
     width: 100%;
     outline: none;
     margin-top: 5px;
@@ -163,11 +170,35 @@ body {
 	background-color: #0D1117;
 }
 
-input:focus {
+.inputp{
+    width: 100%;
+    outline: none;
+    margin-top: 5px;
+    font-size: 16px;
+    padding: 4px 6px;
+    border-radius: 5px;
+	border: 1px solid var(--border-color);
+	background-color: #0D1117;
+}
+/* input {
+    width: 100%;
+    outline: none;
+    margin-top: 5px;
+    font-size: 16px;
+    padding: 4px 6px;
+    border-radius: 5px;
+	border: 1px solid var(--border-color);
+	background-color: #0D1117;
+}*/
+
+.inputp:focus {
 	border: 1px solid var(--primary-dark);
 	caret-color: #E6EDf3;
-} */
-
+} 
+.inpute:focus{
+    border: 1px solid var(--primary-dark);
+	caret-color: #E6EDf3;
+}
 .submit-btn {
     width: 100%;
     padding: 5px 0px;
@@ -233,3 +264,129 @@ input:focus {
         font-size: 14px;
     }
 }
+/***********************************************/
+
+
+:root {
+  --card-height: 65vh;
+  --card-width: calc(var(--card-height) / 1.5);
+  --rotate: 132deg; /* Define the initial rotation angle */
+}
+
+.card {
+  background: #191c29;
+  width: var(--card-width);
+  height: var(--card-height);
+  padding: 3px;
+  position: relative;
+  border-radius: 6px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  display: flex;
+  font-size: 1.5em;
+  color: rgb(88, 199, 250, 0%);
+  cursor: pointer;
+  font-family: cursive;
+}
+.card:hover {
+  color: rgb(88, 199, 250, 100%);
+  transition: color 1s;
+}
+  .card:hover:before, .card:hover:after {
+    animation: spin 2.5s linear infinite, colorChange 5s linear infinite alternate;
+  }
+  
+  .card::before {
+    content: "";
+    width: 104%;
+    height: 102%;
+    border-radius: 8px;
+    background-image: linear-gradient(
+      var(--rotate)
+      , #5ddcff, #3c67e3 43%, #4e00c2);
+      position: absolute;
+      z-index: -1;
+      top: -1%;
+      left: -2%;
+      animation: spin 2.5s linear infinite;
+  }
+  
+  .card::after {
+    position: absolute;
+    content: "";
+    top: calc(var(--card-height) / 6);
+    left: 0;
+    right: 0;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    transform: scale(0.8);
+    filter: blur(calc(var(--card-height) / 6));
+    background-image: linear-gradient(
+      var(--rotate)
+      , #5ddcff, #3c67e3 43%, #4e00c2);
+      opacity: 1;
+    transition: opacity .5s;
+    animation: spin 2.5s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      --rotate: 0deg;
+    }
+    100% {
+      --rotate: 360deg;
+    }
+  }
+  
+  .login-box {
+    background: none;
+    width: var(--card-width);
+    height: var(--card-height);
+    padding: 3px;
+    position: relative;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: cursive;
+  }
+  
+  .login-box h1 {
+    color: white;
+    font-family: Jost;
+  }
+  .login-box input {
+    width: 80%;
+    margin: 10px 0;
+    padding: 10px;
+    border: none;
+    background-color: #f0f5ff;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  
+  .login-box button {
+    width: 50%;
+    padding: 10px;
+    background-color: #63c4ff;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .custom-body {
+    color: #212534;
+    text-decoration: none;
+    font-family: sans-serif;
+    font-weight: bold;
+    background-color: #161B22;
+    margin-top: 2rem;
+  }
+  
