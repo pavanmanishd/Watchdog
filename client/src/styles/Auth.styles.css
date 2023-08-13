@@ -44,6 +44,7 @@ body {
 .custom-body {
     width: 100%;
     height: 100vh;
+    margin-top: 0rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -387,6 +388,6 @@ body {
     font-family: sans-serif;
     font-weight: bold;
     background-color: #161B22;
-    margin-top: 2rem;
+    /* margin-top: 2rem; */
   }
   
