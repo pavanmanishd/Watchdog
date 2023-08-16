@@ -3,7 +3,6 @@ import { Switch, Route ,useHistory } from "react-router-dom";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import SignUp from "./components/Signup";
-import Video from "./components/Video_websocket";
 import Encounters from "./components/Encounters";
 import Encounter from "./components/Encounter";
 import Add from "./components/Add";
@@ -33,7 +32,7 @@ function App() {
   const handleClick = (notification) => {
     console.log("Notification clicked:", notification);
     const time = notification.timestamp.split(" ");
-    history.push(`/encounter/${notification.name}/${time[0]}/${time[1]}`);
+    history.push(`/encounter/${notification.name}/${time[0]}/${time[1].replaceAll(":", "/")}`);
   };
 
   return (

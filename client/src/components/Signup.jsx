@@ -1,6 +1,5 @@
 import { useState } from "react";
 import config from "../config/index";
-import "../styles/Auth.styles.css";
 
 export default function Signup() {
   const [username, setUsername] = useState("");

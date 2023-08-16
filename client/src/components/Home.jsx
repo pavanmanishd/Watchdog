@@ -1,6 +1,5 @@
 import  { useEffect ,useState} from "react";
 import {useHistory} from "react-router-dom";
- import '../styles/Auth.home.css';
 import { FaHome } from 'react-icons/fa'; // Import FaHome icon
 export default function Home() {
   const [isLogged, setIsLogged] = useState(false);

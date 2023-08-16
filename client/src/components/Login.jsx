@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import config from "../config/index";
 import "../styles/Auth.styles.css";
 
@@ -29,69 +29,38 @@ export default function Login() {
     }
   };
   return (
-    // <div>
-    //   <h1>Login</h1>
-    //   <div>
-    //     <form onSubmit={loginUser}>
-    //       <input
-    //         type="text"
-    //         placeholder="email"
-    //         value={email}
-    //         onChange={(e) => setEmail(e.target.value)}
-    //       />
-    //       <input
-    //         type="password"
-    //         placeholder="Password"
-    //         value={password}
-    //         onChange={(e) => setPassword(e.target.value)}
-    //       />
-    //       <button type="submit">Login</button>
-    //     </form>
-    //   </div>
-    // </div>
-     <div className="custom-body">
-    <div className="container">
-      <div className="github-logo">
-        <i className="fa-brands fa-github"></i>
-      </div>
-      <h1 className="github-head">Sign in to Surveillance</h1>
-      <div className="login-wrapper">
-        <form onSubmit={loginUser}>
-          <div className="input-box">
-            <div className="input-label">Username or email address</div>
+    <main className="page">
+      <div className="main-container">
+        <div className="container">
+          <h1 className="heading">Login</h1>
+          <div className="group">
+            <label htmlFor="email" className="label">Email address</label>
             <input
-              required
-              type="text"
-              className="inpute"
+              name="email"
+              type="email"
+              className="input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="input-box">
-            <div className="input-label">
-              <span>Password</span>
-              <a href="github-login-page/">Forgot password?</a>
-            </div>
+          <div className="group">
+            <label htmlFor="password" className="label">Password</label>
             <input
-              required
+              name="password"
               type="password"
-              className="inputp"
+              className="input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button className="submit-btn" type="submit">
-            Sign in
-          </button>
-        </form>
+          <button className="btn">Log In</button>
+          <hr className="hr"/>
+          <div className="group2">
+            <p className="context">Don't have an account? </p>
+            <a href="/signup" className="link"><button className="link-btn">Sign Up</button></a>
+          </div>
+        </div>
       </div>
-      <div className="info">
-      <span>
-        
-      New to Surveillance? <a href="/signup/">Create an account.</a>
-      </span>
-      </div>
-    </div>
-    </div>
+    </main>
   );
 }

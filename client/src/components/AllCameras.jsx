@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Video from "./Video_websocket";
 import Video_http from "./Video_http";
 
 export default function AllCameras() {
