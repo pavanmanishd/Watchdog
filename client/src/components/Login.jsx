@@ -19,9 +19,7 @@ export default function Login() {
       }),
     });
     const data = await response.json();
-    // console.log(data)
     if (data.status === true) {
-      alert("Login Successful");
       localStorage.setItem("token", data.token);
       window.location.href = "/";
     } else {
@@ -53,7 +51,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button className="btn">Log In</button>
+          <button className="btn" onClick={loginUser}>Log In</button>
           <hr className="hr"/>
           <div className="group2">
             <p className="context">Don't have an account? </p>

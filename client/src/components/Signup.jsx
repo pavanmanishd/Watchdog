@@ -1,6 +1,6 @@
 import { useState } from "react";
 import config from "../config/index";
-import "../styles/Auth.styles.css"
+import "../styles/Auth.styles.css";
 export default function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -28,59 +28,6 @@ export default function Signup() {
   };
 
   return (
-    // <div className="custom-body">
-    // <div className="container">
-    //   <div className="github-logo">
-    //     <i className="fa-brands fa-github"></i>
-    //   </div>
-    //   <h1 className="github-head">Sign up to Surveillance</h1>
-    //   <div className="login-wrapper">
-    //     <form onSubmit={signupUser}>
-    //       <div className="input-box">
-    //         <div className="input-label">Username</div>
-    //         <input
-    //           required
-    //           type="text"
-    //           className="inputp"
-    //           value={username}
-    //           onChange={(e) => setUsername(e.target.value)}
-    //         />
-    //       </div>
-    //       <div className="input-box">
-    //         <div className="input-label">Email</div>
-    //         <input
-    //           required
-    //           type="text"
-    //           className="inpute"
-    //           value={email}
-    //           onChange={(e) => setEmail(e.target.value)}
-    //         />
-    //       </div>
-    //       <div className="input-box">
-    //         <div className="input-label">
-    //           <span>Password</span>
-    //         </div>
-    //         <input
-    //           required
-    //           type="password"
-    //           className="inputp"
-    //           value={password}
-    //           onChange={(e) => setPassword(e.target.value)}
-    //         />
-    //       </div>
-    //       <button className="submit-btn" type="submit">
-    //         Sign up
-    //       </button>
-    //     </form>
-    //   </div>
-    //   <div className="info">
-    //     <span>
-    //       Already have an account? <a href="/login/">Login.</a>
-    //     </span>
-    //   </div>
-    // </div>
-    // </div>
-
     <main className="page">
       <div className="main-container">
         <div className="container">
@@ -121,7 +68,9 @@ export default function Signup() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button className="btn">Sign Up</button>
+          <button className="btn" onClick={signupUser}>
+            Sign Up
+          </button>
           <hr className="hr" />
           <div className="group2">
             <p className="context">Already have an account? </p>

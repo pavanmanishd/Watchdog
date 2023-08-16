@@ -34,7 +34,31 @@ function App() {
     const time = notification.timestamp.split(" ");
     history.push(`/encounter/${notification.name}/${time[0]}/${time[1].replaceAll(":", "/")}`);
   };
-
+  const [isLogged, setIsLogged] = useState(false);
+  const checkToken = async (token) => {
+    const res = await fetch("http://localhost:8000/api/token", {
+      headers: {
+        "x-access-token": token,
+      },
+    });
+    const data = await res.json();
+    if (data.status === false) {
+      localStorage.removeItem("token");
+      history.push("/login"); 
+    } else {
+      console.log("token is valid");
+      console.log(data);
+      setIsLogged(true);
+    }
+  };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      checkToken(token);
+    } else {
+      history.push("/login");
+    }
+  }, []);
   return (
     <div>
       <div style={{position:"absolute", bottom:"50px",right:"50px"}}>
