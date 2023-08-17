@@ -25,7 +25,7 @@ export default function Video_http({ url, index }) {
   }, []);
 
   const handleClick = () => {
-    history.push("/video/" + index);
+    history.push("/camera/" + index);
   };
 
   return (

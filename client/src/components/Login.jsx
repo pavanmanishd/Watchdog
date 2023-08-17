@@ -8,7 +8,7 @@ export default function Login() {
 
   const loginUser = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${config.api}/login`, {
+    const response = await fetch(`${config.authapi}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

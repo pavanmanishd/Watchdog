@@ -8,7 +8,7 @@ export default function Signup() {
 
   const signupUser = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${config.api}/signup`, {
+    const response = await fetch(`${config.authapi}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

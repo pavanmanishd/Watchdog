@@ -52,7 +52,7 @@ export default function Encounter() {
           sec
       )
       .then((response) => {
-        // console.log(response.data);
+        console.log(response.data);
         setPrediction(response.data);
       })
       .catch((error) => {
@@ -105,7 +105,7 @@ export default function Encounter() {
               <h3>Prediction Confidence : {prediction.confidence}</h3>
               <button
                 onClick={() => {
-                  history.push("/video/" + prediction.camera_id);
+                  history.push("/camera/" + prediction.camera_id);
                 }}
               >
                 Live Camera Feed
