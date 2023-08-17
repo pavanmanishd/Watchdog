@@ -46,8 +46,6 @@ function App() {
       localStorage.removeItem("token");
       history.push("/login"); 
     } else {
-      console.log("token is valid");
-      console.log(data);
       setIsLogged(true);
     }
   };
@@ -84,7 +82,6 @@ function App() {
         <Route exact path="/signup">
           <SignUp />
         </Route>
-        {/* <Route exact path="/video/:id"> <Video /> </Route> */}
         <Route exact path="/encounters">
           <Encounters />
         </Route>
@@ -94,7 +91,7 @@ function App() {
         <Route exact path="/allcameras">
           <AllCameras />
         </Route>
-        <Route exact path="/video/:id">
+        <Route exact path="/camera/:id">
           <Video_http />
         </Route>
         <Route exact path="/criminals">

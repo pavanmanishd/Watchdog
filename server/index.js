@@ -110,58 +110,9 @@ function update_model(image, criminalName) {
         });
 }
 
-
-// notifies the frontend that an enocunter has been detected
-// app.post("/notify", async (req, res) => {
-//     const data = req.body[0];
-
-//     if (!fs.existsSync(path.join(__dirname, "encounters"))) {
-//         fs.mkdirSync(path.join(__dirname, "encounters"));
-//     }
-//     if (!fs.existsSync(path.join(__dirname, "encounters", `${data.name}`))) {
-//         fs.mkdirSync(path.join(__dirname, "encounters", `${data.name}`));
-//     }
-//     const imagePath = path.join(__dirname, "encounters", `${data.name}`, `${data.timestamp.replace(" ", "_")}.jpg`);
-//     const imageBuffer = Buffer.from(data.image, "base64");
-//     fs.writeFile(imagePath, imageBuffer, "base64")
-//         .then(() => {
-//             console.log("Image saved:", imagePath);
-//         })
-//         .catch((err) => {
-//             console.error("Error saving image:", err);
-//         });
-
-//     const sqlInsert = 'INSERT INTO Encounters (name, confidence, timestamp, url,location, camera_id, filepath) VALUES (?, ?, ?, ?, ?, ?, ?)';
-//     db.query(sqlInsert, [data.name, data.confidence, data.timestamp, data.camerasocketurl, data.location, data.camera_id, imagePath], (err, result) => {
-//         if (err) {
-//             console.log("Error inserting encounter data into database");
-//             console.log(err);
-//             return;
-//         }
-//         else {
-//             console.log("Encounter data inserted into database");
-//         }
-//     });
-
-//     const message = `Encounter detected`;
-//     wss.clients.forEach((client) => {
-//         if (client.readyState === WebSocket.OPEN) {
-//             client.send({
-//                 name: data.name,
-//                 // confidence: data.confidence,
-//                 timestamp: data.timestamp,
-//                 // url: data.camerasocketurl,
-//                 location: data.location,
-//                 camera_id: data.camera_id,
-//             });
-//         }
-//     });
-//     res.send(message);
-// });
-
-
 app.post("/notify", async (req, res) => {
     try {
+        console.log(req.body);
         const data = req.body[0];
 
         if (!fs.existsSync(path.join(__dirname, "encounters"))) {
@@ -205,8 +156,6 @@ app.post("/notify", async (req, res) => {
         res.status(500).send("An error occurred");
     }
 });
-
-
 
 
 app.get("/cameras", (req, res) => {
@@ -292,6 +241,36 @@ app.get("/criminals/:name/image", (req, res) => {
     );
 });
 
+app.get("/encounters", (req, res) => {
+    const sqlSelect = 'SELECT * FROM Encounters ORDER BY timestamp DESC';
+    db.query(sqlSelect, (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            // console.log(result);
+            res.send(result);
+        }
+    }
+    );
+});
+
+app.get("/encounters/:limit", (req, res) => {
+    const limit = req.params.limit;
+    const sqlSelect = `SELECT * FROM Encounters ORDER BY timestamp DESC LIMIT ${limit}`;
+    db.query(sqlSelect,(err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            // console.log(result);
+            res.send(result);
+        }
+    }
+    );
+});
 
 app.get("/encounters/:name/:date/:hr/:min/:sec", (req, res) => {
     const { name, date, hr,min,sec } = req.params;
