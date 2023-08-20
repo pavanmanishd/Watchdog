@@ -27,10 +27,8 @@ def load_known_faces():
                 known_face_encodings.append(face_encoding)
                 known_face_names.append(person_name)
     
-    # print(len(known_face_encodings))
     known_face_encodings_text = [','.join(str(e) for e in known_face_encoding) for known_face_encoding in known_face_encodings]
     known_face_encodings_text = '\n'.join(str(e) for e in known_face_encodings_text)
-    # print(known_face_encodings_text)
     known_face_names_text = ','.join(str(e) for e in known_face_names)
     known_faces_text = known_face_encodings_text + '\n' + known_face_names_text
     print('[INFO] Writing to known_faces.txt...')

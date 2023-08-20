@@ -19,7 +19,7 @@ IMG_WIDTH = 640
 IMG_HEIGHT = 480
 DATE_FORMAT = "%Y%m%d_%H%M%S_%f"
 DATABASE_UPDATING = Lock()
-THREADS_PER_CAMERA = 3
+THREADS_PER_CAMERA = 2
 
 class Model(object):
     def __init__(self, known_faces_dir):
@@ -44,6 +44,7 @@ class Model(object):
                         self.known_face_names.append(person_name)
             print(len(self.known_face_encodings))
             print(self.known_face_names)
+        print('[INFO] Model loaded')
     
     def updater(self):
         try:
@@ -72,8 +73,6 @@ class Model(object):
             known_faces_data = data.split('\n')
             known_face_names = known_faces_data[-1].split(',') 
             known_faces_encodings = [np.array(list(map(float, i.split(',')))) for i in known_faces_data[:-1]]
-            # print(known_faces_encodings)
-            # print(known_face_names)
             self.known_face_encodings = known_faces_encodings
             self.known_face_names = known_face_names
 
@@ -118,9 +117,6 @@ class Stream():
     def send(self, data):
         self.conn.send(data)
 
-def stream_video():
-    pass
-
 class Camera(object):
     def __init__(self, details:dict, camera_buffer:Queue=None):
         self.url = int(details['url'])
@@ -143,12 +139,8 @@ class Camera(object):
             if self.capture.isOpened():
                 (self.status, self.frame) = self.capture.read()
                 if camera_buffer:
-                    # print('[INFO] Camera buffer ',camera_buffer.qsize())
-                    # print('[INFO] Putting frame in camera buffer: ',camera_buffer)
                     camera_buffer.put((datetime.now().strftime(DATE_FORMAT)[:-3], self.frame))
                     camera_buffer.task_done()
-            # time.sleep(self.FPS)
-            # time.sleep(self.FPS)
             
     def show_frames(self):
         while True:
@@ -175,7 +167,7 @@ class Camera(object):
 
 class Network_Camera(object):
     def __init__(self, details:dict, camera_buffer:Queue=None):
-        self.url = details['url']
+        self.url = details['url']+'shot.jpg'
         self.location = details['location']
         self.camera_id = details['camera_id']
         self.camera_buffer = camera_buffer
@@ -192,15 +184,11 @@ class Network_Camera(object):
             try:
                 img = get(self.url)
                 self.frame = cv2.imdecode(np.array(bytearray(img.content), dtype=np.uint8), -1)
-                # print('[MSG] Frame captured from network camera')
                 if camera_buffer:
-                    # print('[INFO] Camera buffer ',camera_buffer.qsize())
-                    # print('[INFO] Putting frame in camera buffer: ',camera_buffer)
                     camera_buffer.put((datetime.now().strftime(DATE_FORMAT)[:-3], self.frame))
                     camera_buffer.task_done()
             except:
                 continue
-            # time.sleep(self.FPS)
 
     def show_frames(self):
         while True:
@@ -243,12 +231,15 @@ class DataBase():
         self.host = "localhost"
         self.port = "1521"
         self.service_name = "xe"
-        try:
-            dsn = cx_Oracle.makedsn(self.host, self.port, service_name=self.service_name)
-            self.connection = cx_Oracle.connect(self.username, self.password, dsn)
-        except:
-            print('[ERROR] Database connection failed')
-            raise Exception('Database connection failed')
+        while True:
+            try:
+                dsn = cx_Oracle.makedsn(self.host, self.port, service_name=self.service_name)
+                self.connection = cx_Oracle.connect(self.username, self.password, dsn)
+                print('[INFO] Database connected')
+                break
+            except:
+                print('[ERROR] Database connection failed')
+                print('[INFO] Retrying again...')
         
     def insert(self, file_name, encounter_details):
         with self.connection.cursor() as cursor: 
@@ -263,8 +254,6 @@ class DataBase():
                     "location": encounter_details[encounter]["location"],
                     "camera_id": encounter_details[encounter]["camera_id"]
                 }
-                if values["confidence"] < '43%':
-                    continue
                 values["timestamp"] = values["timestamp"].strftime('%d-%b-%Y %H:%M:%S')
                 cursor.execute(query, values)
             self.connection.commit()
@@ -274,8 +263,10 @@ class Threaded_Model():
         print('[INFO] Loading model...')
         self.model = Model('train_images')
         self.models = [self.model for _ in range(len(cameras))]
-        print('[INFO] Model loaded')
         self.camera_details = cameras
+
+        print('[INFO] Connecting to database...')
+        self.db = DataBase()
 
         self.n = len(cameras)
         self.camera_types = [cameras[i]['type'] for i in cameras]
@@ -303,14 +294,11 @@ class Threaded_Model():
             thread.daemon = True
             thread.start()
 
-        print('[INFO] Starting frame showing...')
+        print('[INFO] Starting frame saving...')
         self.show_frames_thread = Thread(target=self.save_frames)
         self.show_frames_thread.daemon = True
         self.show_frames_thread.start()
 
-        print('[INFO] Connecting to database...')
-        self.db = DataBase()
-        print('[INFO] Connected to database')
 
     def process_frames(self, camera_index:int):
         model = self.models[camera_index]
@@ -331,12 +319,9 @@ class Threaded_Model():
                 try:
                     encounter_time, frame, encounter_details = self.processed_buffers[i].get(block=False)
                     self.processed_buffers[i].task_done()
-                    # cv2.imshow('Processed Camera ' + self.camera_names[i], frame)
-                    # cv2.waitKey(1)
                     file_name = self.camera_names[i] + '_' + str(encounter_time)
                     cv2.imwrite('encounters/' + file_name + '.jpg', frame)
                     Thread(target=self.db.insert, args=(file_name, encounter_details)).start()
-                    # self.db.insert(file_name, encounter_details)
                 except:
                     pass
 
@@ -345,8 +330,7 @@ if __name__ == '__main__':
     camera_details = json.load(open('config.json', 'r'))['cameras']
     cams = dict()
     for camera in camera_details:
-        cams[camera_details[camera]['name']] = {'type':camera_details[camera]['type'], 'url':camera_details[camera]['url']+'shot.jpg', 'location':camera_details[camera]['location'], 'camera_id':camera}
-    # print(cams)
+        cams[camera_details[camera]['name']] = {'type':camera_details[camera]['type'], 'url':camera_details[camera]['url'], 'location':camera_details[camera]['location'], 'camera_id':camera}
 
     tc = Threaded_Model(cams)
     while True:
