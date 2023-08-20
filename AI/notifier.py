@@ -7,8 +7,17 @@ import cv2
 import requests
 import base64
 import json
+import logging
 
 PREVIOUS_ENCOUNTER_CLEAR_TIME = 5 # in minutes
+
+# logging.basicConfig(filename='model.log', format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG, encoding='utf-8')
+logging.basicConfig(
+    filename = 'model.log',
+    # encoding = 'utf-8',
+    format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S',
+    level=logging.DEBUG)
 
 class Database:
     def __init__(self, username, password, host, port, service_name):
@@ -17,9 +26,11 @@ class Database:
                 dsn = cx_Oracle.makedsn(host, port, service_name=service_name)
                 self.connection = cx_Oracle.connect(username, password, dsn)
                 print('[INFO] Connected to the database')
+                logging.info("Connected to the database")
                 break
             except Exception as e:
                 print("[ERROR] Failed to connect to the database. Retrying in 5 seconds...")
+                logging.error("Failed to connect to the database. Retrying in 5 seconds...")
                 time.sleep(5)
 
     def get_unique_encounters(self, time_period_minutes):
@@ -67,6 +78,7 @@ def clear_encounters():
     while True:
         time.sleep(PREVIOUS_ENCOUNTER_CLEAR_TIME * 60)
         print("[INFO] Clearing previous encounters")
+        logging.info("Clearing previous encounters")
         previous_encounters.clear()
 
 def send_encounters(encounters_list):
@@ -74,7 +86,7 @@ def send_encounters(encounters_list):
         images = []
         for encounter in encounters_list.keys():
             other_persons = db.get_other_persons(encounter)
-            print("Other criminals in the image:", other_persons)
+            # print("Other criminals in the image:", other_persons)
             for other_person in other_persons:
                 if other_person[0] not in previous_encounters.keys():
                     previous_encounters[other_person[0]] = [encounter, encounters_list[encounter]['criminals'][0]["camera_id"]]
@@ -93,12 +105,14 @@ def send_encounters(encounters_list):
         response = requests.post(server_url + "/notify", json=encounters_list)
 
         if response.status_code == 200:
-            print("Encounters sent successfully")
+            print("[INFO] Encounters sent successfully")
+            logging.info("Encounters sent successfully")
             print(response.text)
         else:
-            print("Failed to send encounters")
+            print("[ERROR] Failed to send encounters")
+            logging.error("Failed to send encounters")
     except Exception as e:
-        print('Exception occurred: ', e)
+        print('[ERROR] Exception occurred: ', e)
 
 if __name__ == "__main__":
     server_details = json.load(open("config.json", "r"))['notify_server']
@@ -143,8 +157,8 @@ if __name__ == "__main__":
                         encounter_list[encounter_details['image']] = temp
 
             if len(encounter_list) > 0:
-                print("Encounters:", encounter_list)
-                print("Previous encounters:", previous_encounters)
+                # print("Encounters:", encounter_list)
+                # print("Previous encounters:", previous_encounters)
                 send_encounters(encounter_list)
         
         time.sleep(1)

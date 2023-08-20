@@ -36,3 +36,4 @@ AI/__pycache__/
 AI/todo.txt
 AI/known_faces.txt
 AI/config.json
+AI/model.log

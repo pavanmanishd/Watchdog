@@ -4,10 +4,17 @@ import cv2
 import time
 import os
 import numpy as np
+import logging
 
 known_faces_dir = 'train_images'
 
-
+# logging.basicConfig(filename='model.log', format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG, encoding='utf-8')
+logging.basicConfig(
+    filename = 'model.log',
+    # encoding = 'utf-8',
+    format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S',
+    level=logging.DEBUG)
 
 def load_known_faces():
     known_face_encodings = []
@@ -21,8 +28,10 @@ def load_known_faces():
                 known_face_encoding = face_encodings(image)
                 if not known_face_encoding:
                     print("No face detected in", image_path)
+                    logging.warning("No face detected in %s", image_path)
                     continue
-                print('[MSG] ',person_name, "added to known faces")
+                print('[INFO] ',person_name, "added to known faces")
+                logging.info("%s added to known faces", person_name)
                 face_encoding = known_face_encoding[0]
                 known_face_encodings.append(face_encoding)
                 known_face_names.append(person_name)
@@ -32,9 +41,11 @@ def load_known_faces():
     known_face_names_text = ','.join(str(e) for e in known_face_names)
     known_faces_text = known_face_encodings_text + '\n' + known_face_names_text
     print('[INFO] Writing to known_faces.txt...')
+    logging.info("Writing to known_faces.txt")
     with open('known_faces.txt', 'w') as f:
         f.write(known_faces_text)
     print('[INFO] Writing to known_faces.txt done')
+    logging.info("Writing to known_faces.txt done")
 
 def main():
     size = 0
@@ -54,8 +65,10 @@ def main():
             continue
         if new_size != size:
             print('[INFO] Updating dataset...')
+            logging.info("Updating dataset")
             load_known_faces()
             print('[INFO] Dataset updated')
+            logging.info("Dataset updated")
             size = new_size
         time.sleep(1)
 

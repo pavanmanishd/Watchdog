@@ -10,7 +10,7 @@ from queue import Queue
 import cx_Oracle
 import os
 import json
-
+import logging
 
 HOST = '192.168.0.106'
 PORT = 8090
@@ -20,6 +20,14 @@ IMG_HEIGHT = 480
 DATE_FORMAT = "%Y%m%d_%H%M%S_%f"
 DATABASE_UPDATING = Lock()
 THREADS_PER_CAMERA = 2
+
+# logging.basicConfig(filename='model.log', format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG, encoding='utf-8')
+logging.basicConfig(
+    filename = 'model.log',
+    # encoding = 'utf-8',
+    format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S',
+    level=logging.DEBUG)
 
 class Model(object):
     def __init__(self, known_faces_dir):
@@ -37,14 +45,17 @@ class Model(object):
                         known_face_encodings = face_encodings(image)
                         if not known_face_encodings:
                             print("No face detected in", image_path)
+                            logging.warning("No face detected in %s", image_path)
                             continue
-                        print('[MSG] ',person_name, "added to known faces")
+                        print('[INFO] ',person_name, "added to known faces")
+                        logging.info('%s added to known faces', person_name)
                         face_encoding = known_face_encodings[0]
                         self.known_face_encodings.append(face_encoding)
                         self.known_face_names.append(person_name)
-            print(len(self.known_face_encodings))
-            print(self.known_face_names)
+            # print(len(self.known_face_encodings))
+            # print(self.known_face_names)
         print('[INFO] Model loaded')
+        logging.info('Model loaded')
     
     def updater(self):
         try:
@@ -59,9 +70,11 @@ class Model(object):
                     continue
                 if new_size != size:
                     print('[INFO] Updating model...')
+                    logging.info('Updating model...')
                     with DATABASE_UPDATING:
                         self.update()
                     print('[INFO] Model updated')
+                    logging.info('Model updated')
                     size = new_size
         except:
             pass
@@ -111,8 +124,10 @@ class Stream():
         self.server.bind((HOST, PORT))
         self.server.listen(1)
         print('[INFO] Stream server started at', HOST, PORT)
+        logging.info('Stream server started at %s %s', HOST, PORT)
         self.conn, self.addr = self.server.accept()
         print('[INFO] Stream client connected at', self.addr)
+        logging.info('Stream client connected at %s', self.addr)
 
     def send(self, data):
         self.conn.send(data)
@@ -131,6 +146,7 @@ class Camera(object):
         self.thread = Thread(target=self.update, args=(camera_buffer,))
         self.thread.daemon = True
         print('[INFO] Frame capturing started from camera', self.url)
+        logging.info('Frame capturing started from camera %s', self.url)
         self.thread.start()
 
         
@@ -177,6 +193,7 @@ class Network_Camera(object):
         self.thread = Thread(target=self.update, args=(camera_buffer,))
         self.thread.daemon = True
         print('[INFO] Frame capturing started from network camera', self.url)
+        logging.info('Frame capturing started from network camera %s', self.url)
         self.thread.start()
         
     def update(self, camera_buffer:Queue=None):
@@ -236,10 +253,13 @@ class DataBase():
                 dsn = cx_Oracle.makedsn(self.host, self.port, service_name=self.service_name)
                 self.connection = cx_Oracle.connect(self.username, self.password, dsn)
                 print('[INFO] Database connected')
+                logging.info('Database connected')
                 break
             except:
                 print('[ERROR] Database connection failed')
+                logging.error('Database connection failed')
                 print('[INFO] Retrying again...')
+                logging.info('Retrying again...')
         
     def insert(self, file_name, encounter_details):
         with self.connection.cursor() as cursor: 
@@ -261,11 +281,13 @@ class DataBase():
 class Threaded_Model():
     def __init__(self, cameras: dict):
         print('[INFO] Loading model...')
+        logging.info('Loading model...')
         self.model = Model('train_images')
         self.models = [self.model for _ in range(len(cameras))]
         self.camera_details = cameras
 
         print('[INFO] Connecting to database...')
+        logging.info('Connecting to database...')
         self.db = DataBase()
 
         self.n = len(cameras)
@@ -273,28 +295,34 @@ class Threaded_Model():
         self.camera_names = [i for i in cameras]
 
         print('[INFO] Initializing directory updater thread...')
+        logging.info('Initializing directory updater thread...')
         self.dir_updater_thread = Thread(target=self.model.updater, args=())
         self.dir_updater_thread.daemon = True
         self.dir_updater_thread.start()
 
         print('[INFO] Initializing camera buffers...')
+        logging.info('Initializing camera buffers...')
         self.camera_buffers = [Queue() for _ in range(self.n)]
 
         print('[INFO] Initializing processed buffers...')
+        logging.info('Initializing processed buffers...')
         self.processed_buffers = [Queue() for _ in range(self.n)]
 
         self.processed_frames = Queue()
 
         print('[INFO] Starting frame capturing...')
+        logging.info('Starting frame capturing...')
         self.cameras = [Network_Camera(details=cameras[self.camera_names[i]] , camera_buffer=self.camera_buffers[i]) if self.camera_types[i] == 'Network' else Camera(details=cameras[self.camera_names[i]], camera_buffer=self.camera_buffers[i]) for i in range(self.n)]
 
         print('[INFO] Starting frame processing...')
+        logging.info('Starting frame processing...')
         self.frame_process_threads = [Thread(target=self.process_frames, args=(i%self.n,)) for i in range(self.n * THREADS_PER_CAMERA)]
         for thread in self.frame_process_threads:
             thread.daemon = True
             thread.start()
 
         print('[INFO] Starting frame saving...')
+        logging.info('Starting frame saving...')
         self.show_frames_thread = Thread(target=self.save_frames)
         self.show_frames_thread.daemon = True
         self.show_frames_thread.start()

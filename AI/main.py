@@ -1,25 +1,41 @@
 import os
 import multiprocessing
+import logging
+
+logging.basicConfig(
+    filename = 'model.log',
+    # encoding = 'utf-8',
+    format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S',
+    level=logging.DEBUG)
 
 def start_server():
-    print("Starting server")
+    print("[INFO] Starting server...")
+    logging.info('Starting server...')
     os.system("python server.py")
-    print('Started server')
+    print('[INFO] Started server')
+    logging.info('Started server')
 
 def start_data_loader():
-    print("Starting data_loader")
+    print("[INFO] Starting data_loader...")
+    logging.info('Starting data_loader...')
     os.system("python data_loader.py")
-    print('Started data_loader')
+    print('[INFO] Started data_loader')
+    logging.info('Started data_loader')
 
 def start_notifier():
-    print("Starting notifier")
+    print("[INFO] Starting notifier...")
+    logging.info('Starting notifier...')
     os.system("python notifier.py")
-    print('Started notifier')
+    print('[INFO] Started notifier')
+    logging.info('Started notifier')
 
 def start_model():
-    print("Starting model")
+    print("[INFO] Starting model...")
+    logging.info('Starting model...')
     os.system("python camera_model.py")
-    print('Started model')
+    print('[INFO] Started model')
+    logging.info('Started model')
 
 if __name__ == "__main__":
     server_process = multiprocessing.Process(target=start_server)
