@@ -1,4 +1,4 @@
-// CriminalRecords.sol
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract CriminalRecords {
@@ -6,7 +6,7 @@ contract CriminalRecords {
         bytes32 evidenceCID;
         bytes32 photographCID;
         bytes32 caseFileCID;
-        // Add more fields as needed
+    
     }
 
     mapping(bytes32 => Record) private records;

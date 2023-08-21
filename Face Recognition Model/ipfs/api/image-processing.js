@@ -2,15 +2,30 @@ const express = require('express');
 const ipfsHelper = require('./ipfsHelper');
 const { handleUploadFile } = require('./uploadService');
 const Web3 = require('web3'); // Import the web3.js library
+//
+
+const express = require('express');
+const ipfsHelper = require('./ipfsHelper');
+const { handleUploadFile } = require('./uploadService');
+const Web3 = require('web3');
+const dotenv = require('dotenv'); // Import the dotenv library
+
+// Load environment variables from .env file
+dotenv.config();
+
+
+// ... rest of your code ...
+
+//
 
 // Replace '0xYourContractAddress' with your actual contract address
-const contractAddress = '0xYourContractAddress';
+const contractAddress = process.env.contactAddress;
+
 
 // Replace 'your-infura-project-id' with your actual Infura project ID
-const infuraProjectID = 'your-infura-project-id';
-
+const infuraProjectID =  process.env.
 // Replace 'your-sender-address' with your actual Ethereum sender address
-const senderAddress = 'your-sender-address';
+const senderAddress =  process.env.
 
 // Replace this array with your actual contract ABI
 const contractABI = [
