@@ -136,7 +136,7 @@ const UploadComponent = () => {
               onChange={(e) => setDateOfBirth(e.target.value)}
               className="text-input"
             />
-            
+
             <input
               type="text"
               placeholder="Gender"
@@ -251,26 +251,39 @@ const UploadComponent = () => {
           <div className="step-container">
             <h3 className="step-heading">Legal Proceedings</h3>
             <p>Arrest Records</p>
-            <input
-              type="file"
-              accept=".pdf"
-              onChange={(e) => handleFileChange(e, setArrestRecords)}
-              className="file-input"
-            />
+            <label className="file-label">
+              <span>Choose a PDF file</span>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => handleFileChange(e, setArrestRecords)}
+                className="file-input"
+              />
+              <span className="file-selected-label"></span>
+            </label>
             <p>Charges/Offenses</p>
-            <input
-              type="file"
-              accept=".pdf"
-              onChange={(e) => handleFileChange(e, setChargesOffenses)}
-              className="file-input"
-            />
+            <label className="file-label">
+              <span>Choose a PDF file</span>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => handleFileChange(e, setChargesOffenses)}
+                className="file-input"
+              />
+              <span className="file-selected-label"></span>
+            </label>
+
             <p>Court Documents</p>
-            <input
-              type="file"
-              accept=".pdf"
-              onChange={(e) => handleFileChange(e, setCourtDocuments)}
-              className="file-input"
-            />
+            <label className="file-label">
+              <span>Choose a PDF file</span>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => handleFileChange(e, setCourtDocuments)}
+                className="file-input"
+              />
+              <span className="file-selected-label"></span>
+            </label>
             <div className="button-container">
               <button onClick={prevStep} className="prev-button">
                 Previous
@@ -284,13 +297,17 @@ const UploadComponent = () => {
         {step === 5 && (
           <div className="step-container">
             <h1 className="photo-heading">Photograph</h1>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              // multiple
-              className="photo-input"
-            />
+            <label className="file-label">
+              <span>Choose a Image</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                // multiple
+                className="photo-input"
+              />
+              <span className="file-selected-label"></span>
+            </label>
             <div className="button-container">
               <button onClick={prevStep} className="prev-button">
                 Previous
@@ -367,13 +384,17 @@ const UploadComponent = () => {
         {step === 8 && (
           <div className="step-container">
             <h1 className="evidence-heading">Evidences (photograph)</h1>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleEvidenceImageChange}
-              // multiple
-              className="photo-input"
-            />
+            <label className="file-label">
+              <span>Choose a Image</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleEvidenceImageChange}
+                // multiple
+                className="photo-input"
+              />
+              <span className="file-selected-label"></span>
+            </label>
             <div className="button-container">
               <button onClick={prevStep} className="prev-button">
                 Previous

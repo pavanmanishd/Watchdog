@@ -5,7 +5,7 @@ import Login from "./components/Login";
 import SignUp from "./components/Signup";
 import Encounters from "./components/Encounters";
 import Encounter from "./components/Encounter";
-import Add from "./components/Add";
+import Upload from "./components/Upload";
 import AllCameras from "./components/AllCameras";
 import Video_http from "./components/Video_http";
 import CriminalList from "./components/CriminalList";
@@ -85,8 +85,8 @@ function App() {
         <Route exact path="/encounters">
           <Encounters />
         </Route>
-        <Route exact path="/add">
-          <Add />
+        <Route exact path="/upload">
+          <Upload />
         </Route>
         <Route exact path="/allcameras">
           <AllCameras />

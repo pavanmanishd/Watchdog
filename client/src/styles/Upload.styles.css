@@ -2,18 +2,22 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+
 .home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
-  max-width: 100vw;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: #ffffff;
+
+  /* background-image: linear-gradient(to bottom, #68D391, #1A202C); */
 }
 
 .upload-container {
   max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
+  /* padding: 50px 65px; */
+  margin: 2rem auto;
   border-radius: 5px;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
@@ -22,6 +26,7 @@
   font-size: 24px;
   margin-bottom: 20px;
   font-weight: 600;
+  color: #000; /* Heading text color */
 }
 
 .step-container {
@@ -107,4 +112,178 @@ input[type="date"] {
 .button-container {
   display: flex;
   justify-content: flex-end;
+}
+
+
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 300px;
+  padding: 50px 65px;
+  background-color: #000;
+  border-radius: 0.3rem;
+  box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.2);
+}
+
+.upload-heading {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #fff;
+}
+
+.step-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 1rem;
+  width: 100%;
+  color: #fff;
+}
+
+.step-heading {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.text-input {
+  min-width: 270px;
+  height: 2rem; /* Adjust height as needed */
+  padding: 0.5rem;
+  border: 1px solid #7c7c7c;
+  background-color: #000;
+  border-radius: 0.3rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.file-input {
+  margin-bottom: 1rem;
+  color: #fff;
+
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.prev-button,
+.next-button,
+.submit-button {
+  width: 45%;
+  height: 2.5rem;
+  border: none;
+  border-radius: 0.3rem;
+  background-color: #68D391;
+  color: #1a1a1a;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.prev-button:hover,
+.next-button:hover,
+.submit-button:hover {
+  background-color: #5cb580; /* Adjust the hover color */
+}
+
+.message {
+  margin-top: 1rem;
+  color: #68D391;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Add additional styles for other elements as needed */
+
+
+.file-input,.photo-input {
+  /* display: none; */
+  color: #000;
+  font-family: 'Plud Jakarta Sans', sans-serif;
+  /* font-size: 1rem; */
+}
+.photo-input{
+  margin-bottom: 0.8rem;
+}
+
+.file-label {
+  display: inline-block;
+  background-color: #b3b3b3; /* Button color */
+  color: #1a1a1a; /* Text color */
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.8rem 1rem 0rem;
+  border-radius: 0.3rem;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.file-label:hover {
+  background-color: #ffffff; /* Adjust the hover color */
+}
+
+/* Style the file input to be clickable via the label */
+.file-input + .file-label, .photo-input + .file-label {
+  cursor: pointer;
+}
+
+/* Visually hide the file input's default button */
+.file-input::-webkit-file-upload-button, .photo-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+
+/* Add an icon or text to indicate file selection */
+.file-selected-label {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  color: #7c7c7c; /* Adjust the color as needed */
+}
+
+/* Style the file input label when a file is selected */
+.file-input:valid + .file-label .file-selected-label::before , .photo-input:valid + .file-label .file-selected-label::before{
+  content: "File Selected: ";
+  font-weight: bold;
+  color: #fff; /* Adjust the color for selected text */
+}
+
+/* Style the file input label when no file is selected */
+.file-input:invalid + .file-label .file-selected-label::before , .photo-input:invalid + .file-label .file-selected-label::before{
+  content: "Select a File";
+  font-weight: normal;
+  color: #7c7c7c; /* Adjust the color for unselected text */
+}
+
+.textarea-input {
+  min-width: 270px;
+  min-height: 100px; /* Adjust height as needed */
+  padding: 0.5rem;
+  border: 1px solid #7c7c7c;
+  background-color: #000;
+  border-radius: 0.3rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  color: #fff;
+  resize: vertical; /* Allow vertical resizing */
 }
