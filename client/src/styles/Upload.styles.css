@@ -1,0 +1,110 @@
+/* Upload.styles.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.home-page {
+  min-height: 100vh;
+  max-width: 100vw;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.upload-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.upload-heading {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.step-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  /* margin-right: 10px; */
+}
+
+.step-heading,
+.photo-heading,
+.associates-heading,
+.incident-heading,
+.victim-heading,
+.evidence-heading {
+  font-size: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.text-input {
+  width: 100%;
+  padding: 10px 0px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input[type="date"] {
+  width: 100%;
+  padding: 10px 0px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.file-input {
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.textarea-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.next-button,
+.prev-button,
+.submit-button {
+  padding: 10px 20px;
+  background-color: #4285f4;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.prev-button {
+  background-color: #ccc;
+}
+
+.message {
+  color: green;
+  margin-top: 10px;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .upload-container {
+    width: 90%;
+    padding: 10px;
+  }
+}
+
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
