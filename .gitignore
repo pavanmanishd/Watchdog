@@ -37,3 +37,7 @@ AI/todo.txt
 AI/known_faces.txt
 AI/config.json
 AI/model.log
+
+
+ipfs/node_modules
+ipfs/.env

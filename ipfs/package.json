@@ -1,0 +1,26 @@
+{
+  "name": "ipfs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node image-processing.js",
+    "dev": "nodemon image-processing.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "ipfs-http-client": "^60.0.1",
+    "nodemon": "^3.0.1",
+    "truffle": "^5.11.2",
+    "web3": "^4.1.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
