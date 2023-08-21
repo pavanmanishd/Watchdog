@@ -1,6 +1,8 @@
-import ipfsClient from 'ipfs-http-client';
+import {create} from 'ipfs-http-client';
 
-const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+// const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+const ipfs = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+
 
 async function uploadToIPFS(data) {
   try {

@@ -3,8 +3,8 @@ import ipfsHelper from './ipfsHelper.js'; // Correct the import path
 async function handleUploadFile(file) {
   try {
     // Convert the uploaded file to a Buffer
-    const bufferData = Buffer.from(await file.arrayBuffer());
-
+    // const bufferData = Buffer.from(await file.arrayBuffer());
+    const bufferData = "test"
     // Upload the buffer data to IPFS
     const ipfsCID = await ipfsHelper.uploadToIPFS(bufferData);
 

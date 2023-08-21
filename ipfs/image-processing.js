@@ -13,12 +13,24 @@ const senderAddress = process.env.SENDER_ADDRESS;
 const contractABI = [
   // Replace with your contract's ABI definitions
   {
-    // Your contract's ABI entries here
-    // Example: { name: 'uploadRecord', type: 'function', inputs: [...] }
+    name: 'uploadRecord',
+    type: 'function',
+    inputs: [ 
+      {
+        name: 'criminalId',
+        type: 'uint256'
+      },
+      {
+        name: 'ipfsCID',
+        type: 'string'
+      }
+    ]
+
   }
 ];
 
-const web3 = new Web3(`https://mainnet.infura.io/v3/${infuraProjectID}`);
+// const web3 = new Web3(`https://mainnet.infura.io/v3/${infuraProjectID}`);
+const web3 = new Web3("http://127.0.0.1:8545");
 const criminalRecordsContract = new web3.eth.Contract(contractABI, contractAddress);
 
 const app = express();
