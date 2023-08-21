@@ -1,0 +1,7 @@
+ultralytics
+pandas
+opencv-python
+numpy==1.24.3
+scipy
+easyocr==1.7.0
+filterpy==1.4.5

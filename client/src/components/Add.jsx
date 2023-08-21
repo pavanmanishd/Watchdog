@@ -1,115 +1,441 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "../styles/Upload.styles.css";
+import config from "../config";
 
-const ImageUploadComponent = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [criminalName, setCriminalName] = useState("");
-  const [criminalAge, setCriminalAge] = useState("");
-  const [criminalHeight, setCriminalHeight] = useState("");
-  const [criminalWeight, setCriminalWeight] = useState("");
-  const [criminalDescription, setCriminalDescription] = useState("");
+const UploadComponent = () => {
+  const [step, setStep] = useState(1);
+
+  // Personal Information
+  const [fullName, setFullName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("");
+  const [nationality, setNationality] = useState("");
+  const [identificationNumbers, setIdentificationNumbers] = useState("");
+
+  // Physical Description
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [hairColor, setHairColor] = useState("");
+  const [eyeColor, setEyeColor] = useState("");
+  const [scarsTattoosBirthmarks, setScarsTattoosBirthmarks] = useState("");
+
+  // Contact Information
+  const [address, setAddress] = useState("");
+  const [phoneNumbers, setPhoneNumbers] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
+
+  // Legal Proceedings (PDFs)
+  const [arrestRecords, setArrestRecords] = useState(null);
+  const [chargesOffenses, setChargesOffenses] = useState(null);
+  const [courtDocuments, setCourtDocuments] = useState(null);
+
+  // Biometric Data (photograph)
+  const [photograph, setphotograph] = useState([]);
+
+  // Associates and Relationships
+  const [familyMembers, setFamilyMembers] = useState("");
+  const [coConspirators, setCoConspirators] = useState("");
+
+  // Incident Details
+  const [descriptionOfCrimes, setDescriptionOfCrimes] = useState("");
+  const [modusOperandi, setModusOperandi] = useState("");
+  const [locationsOfIncidents, setLocationsOfIncidents] = useState("");
+
+  // Victim Information
+  const [victimNames, setVictimNames] = useState("");
+  const [victimStatements, setVictimStatements] = useState("");
+
+  // Evidence Photos
+  const [evidencePhoto, setevidencePhoto] = useState([]);
+
+  // Additional Notes and Observations
+  const [additionalNotes, setAdditionalNotes] = useState("");
+
+  // Message for the user
   const [message, setMessage] = useState("");
 
+  const nextStep = () => {
+    setStep(step + 1);
+  };
+
+  const prevStep = () => {
+    setStep(step - 1);
+  };
+
+  const handleFileChange = (event, setter) => {
+    const selectedFile = event.target.files[0];
+    setter(selectedFile);
+  };
+
   const handleImageChange = (event) => {
-    setSelectedImage(event.target.files[0]);
+    setphotograph(event.target.files[0]);
   };
 
-  const handleCriminalNameChange = (event) => {
-    setCriminalName(event.target.value);
+  const handleEvidenceImageChange = (event) => {
+    setevidencePhoto(event.target.files[0]);
   };
 
-  const handleCriminalAgeChange = (event) => {
-    setCriminalAge(event.target.value);
-  };
-
-  const handleCriminalHeightChange = (event) => {
-    setCriminalHeight(event.target.value);
-  };
-
-  const handleCriminalWeightChange = (event) => {
-    setCriminalWeight(event.target.value);
-  };
-
-  const handleCriminalDescriptionChange = (event) => {
-    setCriminalDescription(event.target.value);
-  };
-
-  const handleUpload = async () => {
-    if (
-      !criminalName ||
-      !criminalAge ||
-      !criminalHeight ||
-      !criminalWeight ||
-      !criminalDescription
-    ) {
-      setMessage("Please provide all required information");
-      return;
-    }
-
-    // send to server using websocket
-    const ws = new WebSocket("ws://localhost:3001");
-    ws.onopen = () => {
-      console.log("WebSocket Client Connected");
-      const reader = new FileReader();
-      reader.readAsDataURL(selectedImage);
-      reader.onloadend = () => {
-        const base64String = reader.result
-          .replace("data:", "")
-          .replace(/^.+,/, "");
-        const data = {
-          criminalName,
-          criminalAge,
-          criminalHeight,
-          criminalWeight,
-          criminalDescription,
-          image: base64String,
-        };
-        ws.send(JSON.stringify(data));
-      };
-    };
-    ws.onclose = () => {
-        console.log("WebSocket Client Disconnected");
-    };
-    setMessage(response.data.message);
+  const handleSubmit = async () => {
+    axios.post(`${config.api}/criminals`, {
+      fullName,
+      dateOfBirth,
+      gender,
+      nationality,
+      identificationNumbers,
+      height,
+      weight,
+      hairColor,
+      eyeColor,
+      scarsTattoosBirthmarks,
+      address,
+      phoneNumbers,
+      emailAddress,
+      familyMembers,
+      coConspirators,
+      descriptionOfCrimes,
+      modusOperandi,
+      locationsOfIncidents,
+      victimNames,
+      victimStatements,
+      additionalNotes,
+    });
+    const formData = new FormData();
+    formData.append("fullName", fullName);
+    formData.append("arrestRecords", arrestRecords);
+    formData.append("chargesOffenses", chargesOffenses);
+    formData.append("courtDocuments", courtDocuments);
+    formData.append("photograph", photograph);
+    formData.append("evidencePhoto", evidencePhoto);
+    await axios.post(`${config.api}/criminals/documents`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // Set the correct content type for FormData
+      },
+    });
+    setMessage("Criminal information uploaded successfully!");
   };
 
   return (
-    <div>
-      <h2>Image Upload with Criminal Details</h2>
-      <input type="file" accept="image/*" onChange={handleImageChange} />
-      <input
-        type="text"
-        placeholder="Criminal Name"
-        value={criminalName}
-        onChange={handleCriminalNameChange}
-      />
-      <input
-        type="number"
-        placeholder="Criminal Age"
-        value={criminalAge}
-        onChange={handleCriminalAgeChange}
-      />
-      <input
-        type="text"
-        placeholder="Criminal Height"
-        value={criminalHeight}
-        onChange={handleCriminalHeightChange}
-      />
-      <input
-        type="text"
-        placeholder="Criminal Weight"
-        value={criminalWeight}
-        onChange={handleCriminalWeightChange}
-      />
-      <textarea
-        placeholder="Criminal Description"
-        value={criminalDescription}
-        onChange={handleCriminalDescriptionChange}
-      />
-      <button onClick={handleUpload}>Upload</button>
-      {message && <p>{message}</p>}
-    </div>
+    <main className="home-page">
+      <div className="upload-container">
+        <h2 className="upload-heading">Upload Criminal Information</h2>
+        {step === 1 && (
+          <div className="step-container">
+            <h3 className="step-heading">Personal Information</h3>
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="text-input"
+            />
+            <input
+              type="date"
+              placeholder="Date of Birth"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              className="text-input"
+            />
+            
+            <input
+              type="text"
+              placeholder="Gender"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="text-input"
+            />
+            <input
+              type="text"
+              placeholder="Nationality"
+              value={nationality}
+              onChange={(e) => setNationality(e.target.value)}
+              className="text-input"
+            />
+            <input
+              type="text"
+              placeholder="Identification Numbers"
+              value={identificationNumbers}
+              onChange={(e) => setIdentificationNumbers(e.target.value)}
+              className="text-input"
+            />
+            <div className="button-container">
+              <button onClick={nextStep} className="next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 2 && (
+          <div className="step-container">
+            <h3 className="step-heading">Physical Characteristics</h3>
+            <input
+              type="text"
+              placeholder="Height"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              className="text-input"
+            />
+            <input
+              type="text"
+              placeholder="Weight"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              className="text-input"
+            />
+            <input
+              type="text"
+              placeholder="Hair Color"
+              value={hairColor}
+              onChange={(e) => setHairColor(e.target.value)}
+              className="text-input"
+            />
+            <input
+              type="text"
+              placeholder="Eye Color"
+              value={eyeColor}
+              onChange={(e) => setEyeColor(e.target.value)}
+              className="text-input"
+            />
+            <input
+              type="text"
+              placeholder="Scars, Tattoos, Birthmarks"
+              value={scarsTattoosBirthmarks}
+              onChange={(e) => setScarsTattoosBirthmarks(e.target.value)}
+              className="text-input"
+            />
+            <div className="button-container">
+              <button onClick={prevStep} className="prev-button">
+                Previous
+              </button>
+              <button onClick={nextStep} className="next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 3 && (
+          <div className="step-container">
+            <h3 className="step-heading">Contact Information</h3>
+            <input
+              type="text"
+              placeholder="Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="text-input"
+            />
+            <input
+              type="text"
+              placeholder="Phone Numbers"
+              value={phoneNumbers}
+              onChange={(e) => setPhoneNumbers(e.target.value)}
+              className="text-input"
+            />
+            <input
+              type="text"
+              placeholder="Email Address"
+              value={emailAddress}
+              onChange={(e) => setEmailAddress(e.target.value)}
+              className="text-input"
+            />
+            <div className="button-container">
+              <button onClick={prevStep} className="prev-button">
+                Previous
+              </button>
+              <button onClick={nextStep} className="next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 4 && (
+          <div className="step-container">
+            <h3 className="step-heading">Legal Proceedings</h3>
+            <p>Arrest Records</p>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => handleFileChange(e, setArrestRecords)}
+              className="file-input"
+            />
+            <p>Charges/Offenses</p>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => handleFileChange(e, setChargesOffenses)}
+              className="file-input"
+            />
+            <p>Court Documents</p>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => handleFileChange(e, setCourtDocuments)}
+              className="file-input"
+            />
+            <div className="button-container">
+              <button onClick={prevStep} className="prev-button">
+                Previous
+              </button>
+              <button onClick={nextStep} className="next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 5 && (
+          <div className="step-container">
+            <h1 className="photo-heading">Photograph</h1>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              // multiple
+              className="photo-input"
+            />
+            <div className="button-container">
+              <button onClick={prevStep} className="prev-button">
+                Previous
+              </button>
+              <button onClick={nextStep} className="next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 6 && (
+          <div className="step-container">
+            <h1 className="associates-heading">Associates and Relationships</h1>
+            <p>Family Members and Friends</p>
+            <input
+              type="text"
+              placeholder="Family Members and Friends"
+              value={familyMembers}
+              onChange={(e) => setFamilyMembers(e.target.value)}
+              className="text-input"
+            />
+            <p>Co-conspirators</p>
+            <input
+              type="text"
+              placeholder="Co-conspirators"
+              value={coConspirators}
+              onChange={(e) => setCoConspirators(e.target.value)}
+              className="text-input"
+            />
+            <div className="button-container">
+              <button onClick={prevStep} className="prev-button">
+                Previous
+              </button>
+              <button onClick={nextStep} className="next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 7 && (
+          <div className="step-container">
+            <h1 className="incident-heading">Incident Details</h1>
+            <p>Crimes Committed</p>
+            <textarea
+              placeholder="Description of Crimes Committed"
+              value={descriptionOfCrimes}
+              onChange={(e) => setDescriptionOfCrimes(e.target.value)}
+              className="textarea-input"
+            />
+            <p>Modus Operandi (Method of Operation)</p>
+            <textarea
+              placeholder="Modus Operandi (Method of Operation)"
+              value={modusOperandi}
+              onChange={(e) => setModusOperandi(e.target.value)}
+              className="textarea-input"
+            />
+            <p>Locations of Incidents</p>
+            <textarea
+              placeholder="Locations of Incidents"
+              value={locationsOfIncidents}
+              onChange={(e) => setLocationsOfIncidents(e.target.value)}
+              className="textarea-input"
+            />
+            <div className="button-container">
+              <button onClick={prevStep} className="prev-button">
+                Previous
+              </button>
+              <button onClick={nextStep} className="next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 8 && (
+          <div className="step-container">
+            <h1 className="evidence-heading">Evidences (photograph)</h1>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleEvidenceImageChange}
+              // multiple
+              className="photo-input"
+            />
+            <div className="button-container">
+              <button onClick={prevStep} className="prev-button">
+                Previous
+              </button>
+              <button onClick={nextStep} className="next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 9 && (
+          <div className="step-container">
+            <h3 className="step-heading">Victim Information</h3>
+            <p>Names of Victims</p>
+            <input
+              type="text"
+              placeholder="Names of Victims"
+              value={victimNames}
+              onChange={(e) => setVictimNames(e.target.value)}
+              className="text-input"
+            />
+            <p>Victim Statements</p>
+            <input
+              type="text"
+              placeholder="Victim Statements"
+              value={victimStatements}
+              onChange={(e) => setVictimStatements(e.target.value)}
+              className="text-input"
+            />
+            <div className="button-container">
+              <button onClick={prevStep} className="prev-button">
+                Previous
+              </button>
+              <button onClick={nextStep} className="next-button">
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 10 && (
+          <div className="step-container">
+            <h3 className="step-heading">Additional Notes and Observations</h3>
+            <textarea
+              placeholder="Notes and Observations"
+              value={additionalNotes}
+              onChange={(e) => setAdditionalNotes(e.target.value)}
+              className="textarea-input"
+            />
+            <div className="button-container">
+              <button onClick={prevStep} className="prev-button">
+                Previous
+              </button>
+              <button onClick={handleSubmit} className="submit-button">
+                Submit
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+      {message && <p className="message">{message}</p>}
+    </main>
   );
 };
 
-export default ImageUploadComponent;
+export default UploadComponent;

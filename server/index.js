@@ -1,4 +1,5 @@
 const express = require("express");
+const fileUpload = require("express-fileupload");
 const http = require("http");
 const WebSocket = require("ws");
 const cors = require('cors');
@@ -12,8 +13,9 @@ require('dotenv').config();
 const app = express();
 app.use(cors())
 app.use(express.static("public"));
-app.use(express.json({ limit: "200mb" }));
-app.use(express.urlencoded({ limit: "200mb", extended: true }));
+app.use(express.json({ limit: "10000mb" }));
+app.use(express.urlencoded({ limit: "10000mb", extended: false }));
+app.use(fileUpload()); 
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
@@ -30,55 +32,6 @@ const db = mysql.createConnection({
 // connect to frontend to receive criminal upload data
 wss.on("connection", (ws) => {
     console.log("WebSocket client connected");
-
-    ws.on("message", (data) => {
-        const criminalData = JSON.parse(data);
-
-        // Save the image to a directory
-        const image = criminalData.image;
-        const criminalName = criminalData.criminalName;
-        const imageBuffer = Buffer.from(image, "base64");
-        const imagePath = path.join(__dirname, "uploads", `${criminalName}.jpg`);
-
-        // if directory does not exist, create it
-        if (!fs.existsSync(path.join(__dirname, "uploads"))) {
-            fs.mkdirSync(path.join(__dirname, "uploads"));
-        }
-
-        // insert criminal data into database
-        const sqlInsert = 'INSERT INTO CriminalData (name, age, height, weight, description) VALUES (?, ?, ?, ?, ?)';
-        db.query(sqlInsert, [criminalData.criminalName, criminalData.criminalAge, criminalData.criminalHeight, criminalData.criminalWeight, criminalData.criminalDescription], (err, result) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            else {
-                console.log("Criminal data inserted into database");
-            }
-        });
-
-        // store in uploads folder
-        fs.writeFile(imagePath, imageBuffer, (err) => {
-            if (err) {
-                console.error("Error saving image:", err);
-                return;
-            } else {
-                console.log("Image saved:", imagePath);
-            }
-        });
-
-
-        // Process other criminal data
-        console.log("Criminal Details:");
-        console.log(`Name: ${criminalData.criminalName}`);
-        console.log(`Age: ${criminalData.criminalAge}`);
-        console.log(`Height: ${criminalData.criminalHeight}`);
-        console.log(`Weight: ${criminalData.criminalWeight}`);
-        console.log(`Description: ${criminalData.criminalDescription}`);
-
-        update_model(criminalData.image, criminalData.criminalName);
-
-    });
 
     ws.on("close", () => {
         console.log("WebSocket client disconnected");
@@ -113,44 +66,50 @@ function update_model(image, criminalName) {
 app.post("/notify", async (req, res) => {
     try {
         console.log(req.body);
-        const data = req.body[0];
 
-        if (!fs.existsSync(path.join(__dirname, "encounters"))) {
-            await fs.promises.mkdir(path.join(__dirname, "encounters"), { recursive: true });
-        }
-        if (!fs.existsSync(path.join(__dirname, "encounters", data.name))) {
-            await fs.promises.mkdir(path.join(__dirname, "encounters", data.name), { recursive: true });
-        }
+        // Loop through the keys in the request body
+        for (const encounterKey in req.body) {
+            const encounter = req.body[encounterKey];
 
-        const imagePath = path.join(__dirname, "encounters", data.name, `${data.timestamp.replace(" ", "_")}.jpg`);
-        const imageBuffer = Buffer.from(data.image, "base64");
-        await fs.promises.writeFile(imagePath, imageBuffer, "base64");
-        console.log("Image saved:", imagePath);
-
-        const sqlInsert = 'INSERT INTO Encounters (name, confidence, timestamp, url, location, camera_id, filepath) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        db.query(sqlInsert, [data.name, data.confidence, data.timestamp, data.camerasocketurl, data.location, data.camera_id, imagePath], (err, result) => {
-            if (err) {
-                console.log("Error inserting encounter data into database");
-                console.log(err);
-            } else {
-                console.log("Encounter data inserted into database");
+            // Create a directory for the encounters if it doesn't exist
+            const encounterDirectory = path.join(__dirname, "encounters");
+            if (!fs.existsSync(encounterDirectory)) {
+                await fs.promises.mkdir(encounterDirectory, { recursive: true });
             }
-        });
 
-        const message = { 
-            name: data.name,
-            timestamp: data.timestamp,
-            location: data.location,
-            camera_id: data.camera_id,
-        };
+            // Save the image
+            const imagePath = path.join(encounterDirectory, `${encounterKey}.jpg`);
+            const imageBuffer = Buffer.from(encounter.image, "base64");
+            await fs.promises.writeFile(imagePath, imageBuffer, "base64");
+            console.log("Image saved:", imagePath);
 
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(message));
-            }
-        });
+            // Insert encounter data into the database
+            const sqlInsert = 'INSERT INTO Encounters (name, confidence, timestamp, url, location, camera_id, filepath) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            db.query(sqlInsert, [encounter.criminals[0].name, encounter.criminals[0].confidence, encounter.criminals[0].timestamp, encounter.criminals[0].camerasocketurl, encounter.criminals[0].location, encounter.criminals[0].camera_id, imagePath], (err, result) => {
+                if (err) {
+                    console.log("Error inserting encounter data into database");
+                    console.log(err);
+                } else {
+                    console.log("Encounter data inserted into database");
+                }
+            });
 
-        res.send("Encounter detected");
+            // Send message to WebSocket clients
+            const message = {
+                name: encounter.criminals[0].name,
+                timestamp: encounter.criminals[0].timestamp,
+                location: encounter.criminals[0].location,
+                camera_id: encounter.criminals[0].camera_id,
+            };
+
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(message));
+                }
+            });
+        }
+
+        res.send("Encounter(s) detected");
     } catch (error) {
         console.error("An error occurred:", error);
         res.status(500).send("An error occurred");
@@ -198,7 +157,7 @@ app.get("/criminals", (req, res) => {
             return;
         }
         else {
-            console.log(result);
+            // console.log(result);
             res.send(result);
         }
     }
@@ -226,7 +185,7 @@ app.get("/criminals/:name", (req, res) => {
 app.get("/criminals/:name/image", (req, res) => {
     const name = req.params.name;
     console.log(name);
-    const imagePath = path.join(__dirname, "uploads", `${name}.jpg`);
+    const imagePath = path.join(__dirname, "uploads", `${name}`, "image.jpg");
     console.log(imagePath);
     fs.readFile(imagePath, (err, data) => {
         if (err) {
@@ -240,6 +199,68 @@ app.get("/criminals/:name/image", (req, res) => {
     }
     );
 });
+
+app.post("/criminals", (req, res) => {
+    const { fullName, dateOfBirth, gender, nationality, identificationNumbers, height, weight, hairColor, eyeColor, scarsTattoosBirthmarks, address, phoneNumbers, emailAddress, familyMembers, coConspirators, descriptionofCrimes, modusOperandi, locationsOfIncidents, victimNames, victimStatements, additionalNotes } = req.body;
+    const sqlInsert = "INSERT INTO CriminalData (fullName,dateOfBirth,gender,nationality,identificationNumbers,height,weight,hairColor,eyeColor,scarsTattoosBirthmarks,address,phoneNumbers,emailAddress,familyMembers,coConspirators,descriptionofCrimes,modusOperandi,locationsOfIncidents,victimNames,victimStatements,additionalNotes) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    db.query(sqlInsert, [fullName, dateOfBirth, gender, nationality, identificationNumbers, height, weight, hairColor, eyeColor, scarsTattoosBirthmarks, address, phoneNumbers, emailAddress, familyMembers, coConspirators, descriptionofCrimes, modusOperandi, locationsOfIncidents, victimNames, victimStatements, additionalNotes], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            console.log(result);
+            res.send("Values inserted");
+        }
+    }
+    );
+});
+
+app.post("/criminals/documents", (req, res) => {
+    try {
+      const name = req.body.fullName;
+      const photograph = req.files.photograph;
+      const arrestRecords = req.files.arrestRecords;
+      const chargesOffenses = req.files.chargesOffenses;
+      const courtDocuments = req.files.courtDocuments;
+      const evidencePhoto = req.files.evidencePhoto;
+  
+      const recordsPath = path.join(__dirname, "uploads", name);
+      fs.mkdirSync(recordsPath, { recursive: true });
+  
+      if (photograph) {
+        const imagePath = path.join(recordsPath, "image.jpg");
+        photograph.mv(imagePath);
+      }
+  
+      if (arrestRecords) {
+        const arrestRecordsPath = path.join(recordsPath, "arrestRecords.pdf");
+        arrestRecords.mv(arrestRecordsPath);
+      }
+  
+      if (chargesOffenses) {
+        const chargesOffensesPath = path.join(recordsPath, "chargesOffenses.pdf");
+        chargesOffenses.mv(chargesOffensesPath);
+      }
+  
+      if (courtDocuments) {
+        const courtDocumentsPath = path.join(recordsPath, "courtDocuments.pdf");
+        courtDocuments.mv(courtDocumentsPath);
+      }
+  
+      if (evidencePhoto) {
+        const evidencePhotoPath = path.join(recordsPath, "evidencePhoto.jpg");
+        evidencePhoto.mv(evidencePhotoPath);
+      }
+
+      update_model(photograph, name);
+
+      res.send("Files saved");
+    } catch (error) {
+      console.error("Error saving files:", error);
+      res.status(500).send("Error saving files");
+    }
+  });
 
 app.get("/encounters", (req, res) => {
     const sqlSelect = 'SELECT * FROM Encounters ORDER BY timestamp DESC';
@@ -259,7 +280,7 @@ app.get("/encounters", (req, res) => {
 app.get("/encounters/:limit", (req, res) => {
     const limit = req.params.limit;
     const sqlSelect = `SELECT * FROM Encounters ORDER BY timestamp DESC LIMIT ${limit}`;
-    db.query(sqlSelect,(err, result) => {
+    db.query(sqlSelect, (err, result) => {
         if (err) {
             console.log(err);
             return;
@@ -273,7 +294,7 @@ app.get("/encounters/:limit", (req, res) => {
 });
 
 app.get("/encounters/:name/:date/:hr/:min/:sec", (req, res) => {
-    const { name, date, hr,min,sec } = req.params;
+    const { name, date, hr, min, sec } = req.params;
     const timestamp = `${date} ${hr}:${min}:${sec}`;
     const sqlSelect = `SELECT * FROM Encounters WHERE name = "${name}" AND timestamp = "${timestamp}"`;
     console.log(sqlSelect);
@@ -291,7 +312,7 @@ app.get("/encounters/:name/:date/:hr/:min/:sec", (req, res) => {
 });
 
 app.get("/encounters/:name/:date/:hr/:min/:sec/image", (req, res) => {
-    const { name, date, hr,min,sec } = req.params;
+    const { name, date, hr, min, sec } = req.params;
     const timestamp = `${date} ${hr}:${min}:${sec}`;
     const sqlSelect = `SELECT filepath FROM Encounters WHERE name = "${name}" AND timestamp = "${timestamp}"`;
     console.log(sqlSelect);
@@ -319,6 +340,8 @@ app.get("/encounters/:name/:date/:hr/:min/:sec/image", (req, res) => {
     }
     );
 });
+
+
 
 
 
