@@ -29,8 +29,8 @@ const contractABI = [
   }
 ];
 
-// const web3 = new Web3(`https://mainnet.infura.io/v3/${infuraProjectID}`);
-const web3 = new Web3("http://127.0.0.1:8545");
+const web3 = new Web3(`https://mainnet.infura.io/v3/${infuraProjectID}`);
+// const web3 = new Web3("http://127.0.0.1:8545");
 const criminalRecordsContract = new web3.eth.Contract(contractABI, contractAddress);
 
 const app = express();
