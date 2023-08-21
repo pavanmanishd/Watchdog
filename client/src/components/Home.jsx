@@ -7,13 +7,16 @@ import "../styles/Home.styles.css";
 export default function Home() {
   const [encounters, setEncounters] = useState([]);
   const [images, setImages] = useState({});
+  const [encounterState, setEncounterState] = useState("Loading...");
   const history = useHistory();
 
   useEffect(() => {
     axios.get(`${config.api}/encounters/10`).then((response) => {
       const data = response.data;
       setEncounters(data);
-
+      if (data.length === 0) {
+        setEncounterState("No encounters found");
+      }
       // Fetch images for each encounter
       data.forEach((encounter) => {
         fetchImage(encounter.name);
@@ -40,8 +43,10 @@ export default function Home() {
     }
   };
 
-  const handleClick = (id) => {
-    history.push(`/camera/${id}`);
+  const handleClick = (encounter) => {
+    // history.push(`/camera/${id}`);
+    const time = encounter.timestamp.split(" ");
+    history.push(`/encounter/${encounter.name}/${time[0]}/${time[1].replaceAll(":","/")}`);
   };
 
   const Encounter = () => {
@@ -52,7 +57,7 @@ export default function Home() {
             <tr
               key={index}
               className="table-row"
-              onClick={() => handleClick(encounter.camera_id)}
+              onClick={() => handleClick(encounter)}
             >
               <td className="table-data">
                 {images[encounter.name] ? (
@@ -101,7 +106,7 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody>
-                {encounters.length === 0 ? <tr><td colSpan="5">Loading...</td></tr> : <Encounter />}
+                {encounters.length === 0 ? <tr><td colSpan="5">{encounterState}</td></tr> : <Encounter />}
               </tbody>
             </table>
           </div>
