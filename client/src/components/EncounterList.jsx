@@ -8,6 +8,9 @@ export default function EncounterList() {
   const [encounters, setEncounters] = useState([]);
   const [images, setImages] = useState({});
   const [encounterState, setEncounterState] = useState("Loading...");
+  const [locationFilter, setLocationFilter] = useState("");
+  const [cameraFilter, setCameraFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); // New state for search
   const history = useHistory();
 
   useEffect(() => {
@@ -19,17 +22,16 @@ export default function EncounterList() {
       }
       // Fetch images for each encounter
       data.forEach((encounter) => {
-        fetchImage(encounter);
+        fetchImage(encounter.name);
       });
     });
   }, []);
 
-  const fetchImage = async (encounter) => {
+  const fetchImage = async (name) => {
     try {
-      // const timestamp = encounter.timestamp.split(" ");
+      // const timestamp = name.split("_")[1]; // Assuming your encounter name is in the format "Name_Timestamp"
       const response = await axios.get(
-        `${config.api}/criminals/${encounter.name}/image`,
-        // `${config.api}/encounters/${encounter.name}/${timestamp[0]}/${timestamp[1].replaceAll(":","/")}/image`,
+        `${config.api}/criminals/${name}/image`,
         {
           responseType: "blob", // Request the response as a blob
         }
@@ -41,7 +43,7 @@ export default function EncounterList() {
       // Store the image URL in the state
       setImages((prevImages) => ({
         ...prevImages,
-        [encounter.name]: imageUrl,
+        [name]: imageUrl,
       }));
     } catch (error) {
       console.error("Error fetching image:", error);
@@ -49,17 +51,41 @@ export default function EncounterList() {
   };
 
   const handleClick = (encounter) => {
-    // history.push(`/camera/${id}`);
-    const time = encounter.timestamp.split(" ");
+    const timestamp = encounter.name.split("_")[1]; // Assuming your encounter name is in the format "Name_Timestamp"
     history.push(
-      `/encounter/${encounter.name}/${time[0]}/${time[1].replaceAll(":", "/")}`
+      `/encounter/${encounter.name}/${timestamp.replaceAll(":", "/")}`
     );
   };
+
+  // Filter and sort logic
+  const filteredEncounters = encounters
+    .filter((encounter) => {
+      if (locationFilter) {
+        return encounter.location === locationFilter;
+      }
+      return true; // If no location filter is set, include all locations
+    })
+    .filter((encounter) => {
+      if (cameraFilter) {
+        return encounter.camera_id === cameraFilter;
+      }
+      return true; // If no camera filter is set, include all cameras
+    })
+    .filter((encounter) => {
+      if (searchTerm) {
+        // Filter by name or location containing the search term (case insensitive)
+        return (
+          encounter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          encounter.location.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+      return true; // If no search term is provided, include all encounters
+    });
 
   const Encounter = () => {
     return (
       <>
-        {encounters.map((encounter, index) => {
+        {filteredEncounters.map((encounter, index) => {
           return (
             <tr
               key={index}
@@ -90,7 +116,7 @@ export default function EncounterList() {
 
   return (
     <div className="encounter-list-page">
-      <div className="home-main">
+      <div className="encounter-main">
         <div className="sidebar">
           <p className="sidebar-heading">Home</p>
           <p className="sidebar-heading">Criminals</p>
@@ -99,6 +125,55 @@ export default function EncounterList() {
         </div>
         <div className="encounter-list-container">
           <h2 className="encounter-list-title">Encounters</h2>
+
+          {/* Filter Form */}
+          <form className="filter-form">
+            <label htmlFor="locationFilter">Location:</label>
+            <select
+              id="locationFilter"
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+            >
+              <option value="">All</option>
+              {/* Map over the unique locations to create options */}
+              {Array.from(new Set(encounters.map((e) => e.location))).map(
+                (location, index) => (
+                  <option key={index} value={location}>
+                    {location}
+                  </option>
+                )
+              )}
+            </select>
+
+            <label htmlFor="cameraFilter">Camera:</label>
+            <select
+              id="cameraFilter"
+              value={cameraFilter}
+              onChange={(e) => setCameraFilter(e.target.value)}
+            >
+              <option value="">All</option>
+              {/* Map over the unique camera IDs to create options */}
+              {Array.from(new Set(encounters.map((e) => e.camera_id))).map(
+                (camera_id, index) => (
+                  <option key={index} value={camera_id}>
+                    {camera_id}
+                  </option>
+                )
+              )}
+            </select>
+
+            {/* Search Input */}
+            <label htmlFor="searchTerm">Search:</label>
+            <input
+              type="text"
+              id="searchTerm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+
+            {/* <button onClick={(e) => e.preventDefault()}>Filter & Sort</button> */}
+          </form>
+
           <div className="home-list">
             <table className="table">
               <thead>
@@ -111,7 +186,7 @@ export default function EncounterList() {
                 </tr>
               </thead>
               <tbody>
-                {encounters.length === 0 ? (
+                {filteredEncounters.length === 0 ? (
                   <tr>
                     <td colSpan="5">{encounterState}</td>
                   </tr>
