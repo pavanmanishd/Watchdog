@@ -1,154 +1,205 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 .encounter-list-page {
-    min-height: 100vh;
-    max-width: 100vw;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  max-width: 100vw;
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
 
-.home-main {
-    width: 100vw;
-    display: flex;
-    flex-direction: row;
+.encounter-main {
+  /* max-width: 100vw; */
+  display: flex;
+  flex-direction: row;
 }
 
 .sidebar {
-    width: 150px;
-    min-height: 100vh;
-    background-color: #000;
+  width: 150px;
+  min-height: 100vh;
+  background-color: #000;
 }
 
 .sidebar-heading {
-    margin: 2rem 1rem;
-    font-weight: 600;
-    color: #fff;
+  padding: 0rem 1rem;
+  margin: 2rem 1rem;
+  font-weight: 600;
+  color: #fff;
 }
 
 .encounter-list-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: 100%;
-    background-color: #222222;
-    color: #fff;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #222222;
+  color: #fff;
 }
 
 .encounter-list-title {
-    font-weight: 800;
-    font-size: 2.5rem;
-    margin: 6rem 5rem 2rem;
+  font-weight: 800;
+  font-size: 2.5rem;
+  margin: 6rem 5rem 2rem;
 }
 
 .encounter-list {
-    display: flex;
-    flex-direction: column;
-    margin-left: 5rem;
-    margin-right: 5rem;
+  display: flex;
+  flex-direction: column;
+  /* margin-left: 5rem; */
+  /* margin-right: 5rem; */
+  margin: 0rem 5rem;
 }
 
 /* style table such that all table elements are centered and it is responsive */
-/* classes I have are table, table-head, table-row, table-data */   
+/* classes I have are table, table-head, table-row, table-data */
 
 .table {
-    display: table;
-    width: 100%;
-    border-collapse: collapse;
-    border-spacing: 0;
-    border: 1px solid #ddd;
-    margin-bottom: 1rem;
-    overflow-x: auto;
-    overflow-y: hidden;
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #ddd;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .table-head {
-    padding: 1rem;
-    text-align: center;
-    cursor: default;
+  padding: 1rem;
+  text-align: center;
+  cursor: default;
 }
 
 .table-head:first-child {
-    margin-left: 1rem;
-    text-align: left;
+  margin-left: 1rem;
+  text-align: left;
 }
 
 .table-row {
-    display: table-row;
-    vertical-align: inherit;
-    border-color: inherit;
-    cursor: pointer;
+  display: table-row;
+  vertical-align: inherit;
+  border-color: inherit;
+  cursor: pointer;
 }
 
 .table-data {
-    display: table-cell;
-    vertical-align: inherit;
+  display: table-cell;
+  vertical-align: inherit;
 }
 
 /* style table head */
 .table-head {
-    font-weight: 600;
-    color: #fff;
-    background-color: #000;
+  font-weight: 600;
+  color: #fff;
+  background-color: #000;
 }
 
 /* style table row */
 .table-row {
-    background-color: #222222;
+  background-color: #222222;
 }
 
 /* style table data */
 .table-data {
-    padding: 1rem;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
 }
 
 /* style table data for first column */
 .table-data:first-child {
-    margin-left: 1rem;
-    text-align: left;
+  margin-left: 1rem;
+  text-align: left;
 }
 
 /* style table data for hover effect */
 .table-row:hover {
-    background-color: #333333;
+  background-color: #333333;
 }
 
 .encounter-image {
-    height: 80px;
-    object-fit: cover;
+  height: 80px;
+  object-fit: cover;
 }
 
 /* style table data for responsive */
 @media screen and (max-width: 600px) {
-    .table {
-        border: 0;
-    }
+  .table {
+    border: 0;
+  }
 
-    .table-head {
-        display: none;
-    }
+  .table-head {
+    display: none;
+  }
 
-    .table-row {
-        margin-bottom: 1rem;
-        display: block;
-        border: 1px solid #ddd;
-    }
+  .table-row {
+    margin-bottom: 1rem;
+    display: block;
+    border: 1px solid #ddd;
+  }
 
-    .table-data {
-        display: block;
-        text-align: right;
-        font-size: 13px;
-        border-bottom: 1px dotted #ddd;
-    }
+  .table-data {
+    display: block;
+    text-align: right;
+    font-size: 13px;
+    border-bottom: 1px dotted #ddd;
+  }
 
-    .table-data::before {
-        content: attr(data-label);
-        float: left;
-        text-transform: uppercase;
-        font-weight: bold;
-    }
+  .table-data::before {
+    content: attr(data-label);
+    float: left;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
 
-    .table-data:last-child {
-        border-bottom: 0;
-    }
+  .table-data:last-child {
+    border-bottom: 0;
+  }
+}
+
+/* ... Other existing styles ... */
+
+/* Style for the filter form */
+.filter-form {
+  margin: 1rem 5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filter-form label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.filter-form select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Style for the filter and sort button */
+.filter-form button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+}
+
+.filter-form button:hover {
+  background-color: #0056b3;
+}
+
+/* ... Other existing styles ... */
+
+/* Style for the search input */
+.filter-form input[type="text"] {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+  margin-right: 1rem;
+  flex-grow: 1; /* Allow it to grow and fill the available space */
 }
