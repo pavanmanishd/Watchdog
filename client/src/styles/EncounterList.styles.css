@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-.home-page{
+
+.encounter-list-page {
     min-height: 100vh;
     max-width: 100vw;
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -11,19 +12,19 @@
     flex-direction: row;
 }
 
-.sidebar{
+.sidebar {
     width: 150px;
     min-height: 100vh;
     background-color: #000;
 }
 
-.sidebar-heading{
+.sidebar-heading {
     margin: 2rem 1rem;
     font-weight: 600;
     color: #fff;
 }
 
-.home-container{
+.encounter-list-container {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -32,21 +33,21 @@
     color: #fff;
 }
 
-.home-head{
+.encounter-list-title {
     font-weight: 800;
     font-size: 2.5rem;
     margin: 6rem 5rem 2rem;
 }
 
-.home-list {
+.encounter-list {
     display: flex;
     flex-direction: column;
     margin-left: 5rem;
     margin-right: 5rem;
 }
 
-/* style table such that all table elements are centered and it is responsive*/
-/* classes i have are table, table-head, table-row, table-data */   
+/* style table such that all table elements are centered and it is responsive */
+/* classes I have are table, table-head, table-row, table-data */   
 
 .table {
     display: table;
@@ -70,11 +71,6 @@
     text-align: left;
 }
 
-/* .table-head:last-child {
-    text-align: right;
-} */
-
-
 .table-row {
     display: table-row;
     vertical-align: inherit;
@@ -95,13 +91,11 @@
 }
 
 /* style table row */
-
 .table-row {
     background-color: #222222;
 }
 
 /* style table data */
-
 .table-data {
     padding: 1rem;
     text-align: center;
@@ -109,30 +103,22 @@
 }
 
 /* style table data for first column */
-
 .table-data:first-child {
     margin-left: 1rem;
     text-align: left;
 }
 
-/* style table data for last column */
-
-/* .table-data:last-child {
-    text-align: right;
-} */
-
 /* style table data for hover effect */
-
 .table-row:hover {
     background-color: #333333;
 }
 
-.encounter-image{
+.encounter-image {
     height: 80px;
     object-fit: cover;
 }
-/* style table data for responsive */
 
+/* style table data for responsive */
 @media screen and (max-width: 600px) {
     .table {
         border: 0;
@@ -166,4 +152,3 @@
         border-bottom: 0;
     }
 }
-

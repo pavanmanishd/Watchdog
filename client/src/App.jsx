@@ -3,7 +3,7 @@ import { Switch, Route ,useHistory } from "react-router-dom";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import SignUp from "./components/Signup";
-import Encounters from "./components/Encounters";
+import EncounterList from "./components/EncounterList";
 import Encounter from "./components/Encounter";
 import Upload from "./components/Upload";
 import AllCameras from "./components/AllCameras";
@@ -83,7 +83,7 @@ function App() {
           <SignUp />
         </Route>
         <Route exact path="/encounters">
-          <Encounters />
+          <EncounterList />
         </Route>
         <Route exact path="/upload">
           <Upload />
