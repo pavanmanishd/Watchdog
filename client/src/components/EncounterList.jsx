@@ -14,7 +14,7 @@ export default function EncounterList() {
   const history = useHistory();
 
   useEffect(() => {
-    axios.get(`${config.api}/encounters/10`).then((response) => {
+    axios.get(`${config.api}/encounters/`).then((response) => {
       const data = response.data;
       setEncounters(data);
       if (data.length === 0) {
