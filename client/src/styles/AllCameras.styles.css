@@ -1,0 +1,50 @@
+/* AllCameras.css */
+
+.cameras-page{
+    display: flex;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.all-cameras-container {
+    width: 100%;
+    margin: 0 auto;
+    min-height: 100vh;
+
+    font-family: "Plus Jakarta Sans", sans-serif;
+    padding: 20px;
+    background-color: #111; /* Dark background color */
+    color: #fff; /* Light text color */
+  }
+  
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .cameras-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns per row */
+    gap: 20px;
+  }
+  
+  .camera-card {
+    background-color: #333; /* Dark card background color */
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .camera-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .camera-card video {
+    width: 100%; /* Make the video width 100% of the card */
+    height: 100%; /* Make the video height 100% of the card */
+    object-fit: cover; /* Maintain aspect ratio and cover the card */
+  }
+  

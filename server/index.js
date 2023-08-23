@@ -130,35 +130,69 @@ app.post("/notify", async (req, res) => {
 
 
 app.get("/cameras", (req, res) => {
-    const model_api_url = "http://192.168.0.106:8000/get_cameras";
-    axios.get(model_api_url)
-        .then((response) => {
-            console.log(response.data);
-            const data = response.data;
-            res.send(data);
+    // const model_api_url = "http://192.168.0.106:8000/get_cameras";
+    // axios.get(model_api_url)
+    //     .then((response) => {
+    //         console.log(response.data);
+    //         const data = response.data;
+    //         res.status(200).send(data);
+    //     }
+    //     )
+    //     .catch((error) => {
+    //         console.log(error);
+    //         res.status(500).send("Error occurred");
+    //     }
+    //     );
+    
+    //read file cameras.json
+    const camerasPath = path.join(__dirname, "cameras.json");
+    fs.readFile(camerasPath, (err, data) => {
+        if (err) {
+            console.log(err);
+            return;
         }
-        )
-        .catch((error) => {
-            console.log(error);
+        else {
+            //parse data to json
+            const cameras = JSON.parse(data);
+            console.log(cameras);
+            res.status(200).send(cameras);
         }
-        );
+    }
+    );
 });
 
 app.get("/cameras/:id", (req, res) => {
     const id = req.params.id;
-    const model_api_url = "http://192.168.0.106:8000/get_cameras";
-    axios.get(model_api_url)
-        .then((response) => {
-            console.log(response.data);
-            const data = response.data[id];
-            // const result = data.
-            res.send(data);
+    // const model_api_url = "http://192.168.0.106:8000/get_cameras";
+    // axios.get(model_api_url)
+    //     .then((response) => {
+    //         console.log(response.data);
+    //         const data = response.data[id];
+    //         // const result = data.
+    //         res.send(data);
+    //     }
+    //     )
+    //     .catch((error) => {
+    //         console.log(error);
+    //     }
+    //     );
+
+    //read file cameras.json
+    const camerasPath = path.join(__dirname, "cameras.json");
+    fs.readFile(camerasPath, (err, data) => {
+        if (err) {
+            console.log(err);
+            return;
         }
-        )
-        .catch((error) => {
-            console.log(error);
+        else {
+            //parse data to json
+            console.log(id);
+            const cameras = JSON.parse(data);
+            console.log(cameras[id]);
+            res.status(200).send(cameras[id]);
         }
-        );
+    }
+    );
 });
 
 

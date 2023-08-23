@@ -21,7 +21,7 @@ todo.txt
 
 /server/node_modules
 /server/.env
-
+/server/cameras.json
 /server/uploads
 /server/encounters
 

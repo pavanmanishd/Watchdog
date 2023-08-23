@@ -1,11 +1,14 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import "../styles/Video.styles.css"; // Import the CSS file with styles for the Video_http component
+import Sidebar from "./Sidebar";
+
 export default function Video_http({ url, index }) {
   const history = useHistory();
   const { id } = useParams();
-  const [URL,setURL] = React.useState(url);
+  const [URL, setURL] = React.useState(url);
   const [camera, setCamera] = React.useState(null);
 
   useEffect(() => {
@@ -14,9 +17,8 @@ export default function Video_http({ url, index }) {
         .get("http://localhost:3001/cameras/" + id)
         .then((response) => {
           console.log(response.data);
-          // url = response.data.url;
           setCamera(response.data);
-          setURL(response.data.url+"video");
+          setURL(response.data.url + "video");
         })
         .catch((error) => {
           console.log(error);
@@ -29,24 +31,41 @@ export default function Video_http({ url, index }) {
   };
 
   return (
-    <div>
-      {camera != null && (
-        <div>
-          <h1>Camera Feed Viewer</h1>
-          <h2>{camera.name}</h2>
-          <h3>Location : {camera.location}</h3>
+    <>
+      {camera != null ? (
+        <div className="cameras-page">
+          <Sidebar />
+        <div className="video-card">
+          <h2 className="camera-name">{camera.name}</h2>
+          <p className="camera-location">{camera.location}</p>
+          <img
+            src={URL}
+            width="640"
+            height="480"
+            style={{ border: "2px solid black" }}
+            alt="Video Frame"
+            onClick={() => {
+              if (id == null) handleClick();
+            }}
+          />
+          </div>
+        </div>
+      ) : (
+        <div className="camera-card">
+          {" "}
+          {/* Apply the camera-card style */}
+          <img
+            src={URL}
+            width="640"
+            height="480"
+            style={{ border: "2px solid black" }}
+            alt="Video Frame"
+            onClick={() => {
+              if (id == null) handleClick();
+            }}
+          />
         </div>
       )}
-      <img
-        src={URL}
-        width="640"
-        height="480"
-        style={{ border: "2px solid black" }}
-        alt="Video Frame"
-        onClick={() => {
-          if (id == null) handleClick();
-        }}
-      />
-    </div>
+    </>
   );
 }
