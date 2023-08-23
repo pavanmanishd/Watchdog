@@ -51,9 +51,10 @@ export default function EncounterList() {
   };
 
   const handleClick = (encounter) => {
-    const timestamp = encounter.name.split("_")[1]; // Assuming your encounter name is in the format "Name_Timestamp"
+    console.log("Clicked on encounter:", encounter);
+    const timestamp = encounter.timestamp.split(" "); // Assuming your encounter name is in the format "Name_Timestamp"
     history.push(
-      `/encounter/${encounter.name}/${timestamp.replaceAll(":", "/")}`
+      `/encounter/${encounter.name}/${timestamp[0]}/${timestamp[1].replaceAll(":","/")}`
     );
   };
 

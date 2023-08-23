@@ -1,0 +1,35 @@
+/* Sidebar.styles.css */
+
+/* Style the sidebar container */
+.sidebar {
+    width: 150px;
+    min-height: 100vh;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 1.5rem 0px;
+}
+  
+  /* Style the sidebar headings (links or buttons) */
+  .sidebar-heading {
+    margin: 10px 0;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none; /* Remove underlines from links if needed */
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Add hover effect to sidebar headings */
+  .sidebar-heading:hover {
+    background-color: #333;
+  }
+  
+  /* Optionally, style a selected or active link differently */
+  /* .active-link {
+    background-color: #555;
+  } */
+  
