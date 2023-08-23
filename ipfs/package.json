@@ -18,7 +18,7 @@
     "ipfs-http-client": "^60.0.1",
     "nodemon": "^3.0.1",
     "truffle": "^5.11.2",
-    "web3": "^4.1.0"
+    "web3": "^4.1.1"
   },
   "keywords": [],
   "author": "",

@@ -4,7 +4,19 @@ import { handleUploadFile } from './uploadService.js'; // Correct the import pat
 import Web3 from 'web3';
 import dotenv from 'dotenv';
 
+// Load environment variables from .env file
 dotenv.config();
+
+let web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+//const Web3 = require('web3');
+// Replace with your Ethereum client's URL
+
+
+console.log('CONTRACT_ADDRESS:', process.env.CONTRACT_ADDRESS);
+
+console.log('INFURA_PROJECT_ID:', process.env.INFURA_PROJECT_ID);
+console.log('SENDER_ADDRESS:', process.env.SENDER_ADDRESS);
+
 
 const contractAddress = process.env.CONTRACT_ADDRESS;
 const infuraProjectID = process.env.INFURA_PROJECT_ID;
@@ -25,13 +37,18 @@ const contractABI = [
         type: 'string'
       }
     ]
-
+  
   }
 ];
 
-const web3 = new Web3(`https://mainnet.infura.io/v3/${infuraProjectID}`);
-// const web3 = new Web3("http://127.0.0.1:8545");
-const criminalRecordsContract = new web3.eth.Contract(contractABI, contractAddress);
+
+//const web3 = new Web3(`https://mainnet.infura.io/v3/${infuraProjectID}`);
+
+
+const criminalRecordsContract = new web3.eth.Contract(contractABI, contractAddress, {
+  from: senderAddress
+});
+
 
 const app = express();
 const port = 3000;

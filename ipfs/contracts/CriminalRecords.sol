@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.5.16;
 
 
 
@@ -14,8 +14,8 @@ contract CriminalRecords {
     mapping(bytes32 => Record) private records;
     mapping(address => bool) private authorizedUsers;
 
-    constructor() {
-        authorizedUsers[msg.sender] = true;
+   constructor() public { 
+            authorizedUsers[msg.sender] = true;
     }
 
     modifier onlyAuthorized() {
