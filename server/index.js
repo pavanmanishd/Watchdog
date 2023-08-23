@@ -15,7 +15,7 @@ app.use(cors())
 app.use(express.static("public"));
 app.use(express.json({ limit: "10000mb" }));
 app.use(express.urlencoded({ limit: "10000mb", extended: false }));
-app.use(fileUpload()); 
+app.use(fileUpload());
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
@@ -41,7 +41,7 @@ wss.on("connection", (ws) => {
 
 // send criminal data to model
 function update_model(image, criminalName) {
-    const model_api_url = "http://192.168.0.106:8000/add_criminal";
+    const model_api_url = "http://192.168.0.106:8000/criminal";
     axios.post(model_api_url, {
         image: image,
         criminalName: criminalName
@@ -49,18 +49,30 @@ function update_model(image, criminalName) {
         .then((response) => {
             console.log(response.data);
             const data = response.data.message;
-            const message = `Criminal data sent to model: ${data}`;
-            console.log(message);
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(message);
-                }
-            });
+            // const message = `Criminal data sent to model: ${data}`;
+            // console.log(message);
+            // wss.clients.forEach((client) => {
+            //     if (client.readyState === WebSocket.OPEN) {
+            //         client.send(message);
+            //     }
+            // });
+            return data;
         }
         )
         .catch((error) => {
             console.log(error);
         });
+}
+function delete_criminal_model(criminalName) {
+    const model_api_url = "http://192.168.0.106:8000/criminal";
+    axios.delete(model_api_url,{
+        criminalName: criminalName
+    })
+        .then((response)=>{
+            console.log(response.data);
+            const data = response.data.message;
+            return data;
+        })
 }
 
 app.post("/notify", async (req, res) => {
@@ -149,6 +161,10 @@ app.get("/cameras/:id", (req, res) => {
         );
 });
 
+
+
+
+
 app.get("/criminals", (req, res) => {
     const sqlSelect = 'SELECT * FROM CriminalData';
     db.query(sqlSelect, (err, result) => {
@@ -167,7 +183,7 @@ app.get("/criminals", (req, res) => {
 app.get("/criminals/:name", (req, res) => {
     const name = req.params.name;
     console.log(name);
-    const sqlSelect = `SELECT * FROM CriminalData WHERE name = "${name}"`;
+    const sqlSelect = `SELECT * FROM CriminalData WHERE fullName = "${name}"`;
     console.log(sqlSelect);
     db.query(sqlSelect, [], (err, result) => {
         if (err) {
@@ -218,49 +234,81 @@ app.post("/criminals", (req, res) => {
 
 app.post("/criminals/documents", (req, res) => {
     try {
-      const name = req.body.fullName;
-      const photograph = req.files.photograph;
-      const arrestRecords = req.files.arrestRecords;
-      const chargesOffenses = req.files.chargesOffenses;
-      const courtDocuments = req.files.courtDocuments;
-      const evidencePhoto = req.files.evidencePhoto;
-  
-      const recordsPath = path.join(__dirname, "uploads", name);
-      fs.mkdirSync(recordsPath, { recursive: true });
-  
-      if (photograph) {
-        const imagePath = path.join(recordsPath, "image.jpg");
-        photograph.mv(imagePath);
-      }
-  
-      if (arrestRecords) {
-        const arrestRecordsPath = path.join(recordsPath, "arrestRecords.pdf");
-        arrestRecords.mv(arrestRecordsPath);
-      }
-  
-      if (chargesOffenses) {
-        const chargesOffensesPath = path.join(recordsPath, "chargesOffenses.pdf");
-        chargesOffenses.mv(chargesOffensesPath);
-      }
-  
-      if (courtDocuments) {
-        const courtDocumentsPath = path.join(recordsPath, "courtDocuments.pdf");
-        courtDocuments.mv(courtDocumentsPath);
-      }
-  
-      if (evidencePhoto) {
-        const evidencePhotoPath = path.join(recordsPath, "evidencePhoto.jpg");
-        evidencePhoto.mv(evidencePhotoPath);
-      }
+        const name = req.body.fullName;
+        const photograph = req.files.photograph;
+        const arrestRecords = req.files.arrestRecords;
+        const chargesOffenses = req.files.chargesOffenses;
+        const courtDocuments = req.files.courtDocuments;
+        const evidencePhoto = req.files.evidencePhoto;
 
-      update_model(photograph, name);
+        const recordsPath = path.join(__dirname, "uploads", name);
+        fs.mkdirSync(recordsPath, { recursive: true });
 
-      res.send("Files saved");
+        if (photograph) {
+            const imagePath = path.join(recordsPath, "image.jpg");
+            photograph.mv(imagePath);
+        }
+
+        if (arrestRecords) {
+            const arrestRecordsPath = path.join(recordsPath, "arrestRecords.pdf");
+            arrestRecords.mv(arrestRecordsPath);
+        }
+
+        if (chargesOffenses) {
+            const chargesOffensesPath = path.join(recordsPath, "chargesOffenses.pdf");
+            chargesOffenses.mv(chargesOffensesPath);
+        }
+
+        if (courtDocuments) {
+            const courtDocumentsPath = path.join(recordsPath, "courtDocuments.pdf");
+            courtDocuments.mv(courtDocumentsPath);
+        }
+
+        if (evidencePhoto) {
+            const evidencePhotoPath = path.join(recordsPath, "evidencePhoto.jpg");
+            evidencePhoto.mv(evidencePhotoPath);
+        }
+
+        update_model(photograph, name);
+
+        res.send("Files saved");
     } catch (error) {
-      console.error("Error saving files:", error);
-      res.status(500).send("Error saving files");
+        console.error("Error saving files:", error);
+        res.status(500).send("Error saving files");
     }
-  });
+});
+
+app.delete("/criminal/:name", (req, res) => {
+    const name = req.params.name;
+    const sqlDelete = `Delete from CriminalData where fullName = ?`
+    db.query(sqlDelete, [name], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            console.log(result);
+            const path = path.join(__dirname, "uploads", `${name}`);
+            fs.rmdirSync(path, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                else {
+                    const status =  delete_criminal_model(name);
+                    console.log(status);
+                    res.status(200).send({ "status": "success" })
+                }
+            })
+        }
+    });
+});
+
+
+
+
+
+
 
 app.get("/encounters", (req, res) => {
     const sqlSelect = 'SELECT * FROM Encounters ORDER BY timestamp DESC';
