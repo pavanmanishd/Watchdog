@@ -11,6 +11,11 @@ const Sidebar = () => {
         <p className="sidebar-heading">Encounters</p>
         <p className="sidebar-heading">CCTV</p>
         {/* Add links or buttons for other sections as needed */}
+        <button className="sidebar-button">
+          <Link className="sidebar-link" to="/upload">
+            Add Criminal
+          </Link>
+        </button>
       </div>
     </div>
   );

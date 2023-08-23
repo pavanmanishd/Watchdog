@@ -40,4 +40,33 @@
   /* .active-link {
     background-color: #555;
   } */
+  /* Add styles for the "Add Criminal" button */
+.sidebar-button {
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    text-align: center;
+    text-decoration: none; /* Remove underlines from links if needed */
+  }
   
+  .sidebar-button:hover {
+    background-color: #555; /* Darken the button on hover */
+  }
+
+  .sidebar-button:active {
+    background-color: #000; /* Add a darker background color when clicked on */
+    color: #fff;
+  }
+
+    .sidebar-button:focus {
+        outline: none;
+    }
+    .sidebar-link {
+        text-decoration: none;
+        color: #fff;
+    }
