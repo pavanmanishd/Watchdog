@@ -33,6 +33,7 @@ function App() {
     console.log("Notification clicked:", notification);
     const time = notification.timestamp.split(" ");
     history.push(`/encounter/${notification.name}/${time[0]}/${time[1].replaceAll(":", "/")}`);
+    window.location.reload();
   };
   const [isLogged, setIsLogged] = useState(false);
   const checkToken = async (token) => {
@@ -85,7 +86,7 @@ function App() {
         <Route exact path="/encounters">
           <EncounterList />
         </Route>
-        <Route exact path="/encounters/:name/:date/:hr/:min/:sec">
+        <Route exact path="/encounter/:name/:date/:hr/:min/:sec">
           <Encounter />
         </Route>
         <Route exact path="/upload">
