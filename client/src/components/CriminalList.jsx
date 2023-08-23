@@ -3,6 +3,7 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import config from "../config/index";
 import "../styles/CriminalList.styles.css"; // Import your CSS file here
+import Sidebar from "./Sidebar";
 
 export default function CriminalList() {
   const [criminals, setCriminals] = useState([]);
@@ -31,6 +32,7 @@ export default function CriminalList() {
           <p className="sidebar-heading">Encounters</p>
           <p className="sidebar-heading">CCTV</p>
         </div>
+        {/* <Sidebar />  */}
         <div className="criminal-list-container">
           <h2 className="criminal-list-title">All Criminals</h2>
           <div className="home-list">

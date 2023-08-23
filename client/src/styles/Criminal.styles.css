@@ -1,0 +1,121 @@
+/* Criminal.styles.css */
+
+.criminal-page {
+    display: flex;
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #fff;
+    background-color: #222222;
+    /* padding: 2rem; */
+  }
+  
+  .criminal-page-container {
+    width: 100%;
+    margin: 2rem;
+  }
+  
+  .criminal-details {
+    flex: 1;
+    background-color: #222222;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    /* width: 70vw; */
+  }
+  
+  .criminal-details h1 {
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .criminal-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+  }
+  
+  .criminal-table td {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .criminal-table td:first-child {
+    width: 30%;
+    font-weight: 800;
+  }
+  
+  .criminal-desc-image {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: auto;
+  }
+  
+  .criminal-image img {
+    height: 300px;
+    width: auto;
+    max-width: 100%;
+    border: 2px solid #000;
+  }
+  
+  .documents {
+    margin-top: 2rem;
+    margin-right: 2rem;
+  }
+  
+  .documents h2 {
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .documents a {
+    display: block;
+    margin-bottom: 1rem;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .documents a:hover {
+    text-decoration: underline;
+  }
+
+    .documents img {
+      /* height: 300px; */
+      /* width: auto; */
+      /* max-width: 100%; */
+      /* border: 2px solid #000; */
+      margin-right: 10px;
+    }
+  
+  @media screen and (max-width: 600px) {
+    .criminal-details {
+      margin: 0;
+      width: 100%;
+    }
+  
+    .criminal-details h1 {
+      font-size: 1.8rem;
+    }
+  
+    .criminal-table {
+      margin-bottom: 1rem;
+    }
+  
+    .criminal-table td {
+      font-size: 1rem;
+      padding: 0.5rem;
+    }
+  
+    .criminal-image {
+      justify-content: center;
+    }
+  }
+  

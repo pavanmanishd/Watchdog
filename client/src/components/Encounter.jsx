@@ -139,7 +139,7 @@ export default function Encounter() {
               </tbody>
             </table>
           </div>
-          <div className="encounter-image">
+          <div className="encounter-desc-image">
             {isPredictionImageLoaded && (
               <img
                 src={predictionImage}

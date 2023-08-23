@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
+import "../styles/Criminal.styles.css"; // Import your Criminal styles here
+import Sidebar from "./Sidebar";
 export default function Criminal() {
   const { name } = useParams();
   const [criminal, setCriminal] = useState(null);
@@ -93,47 +94,93 @@ export default function Criminal() {
       });
   }, []);
 
+  const renderTableRow = (label, value) => {
+    if (value !== null) {
+      return (
+        <tr>
+          <td>{label}</td>
+          <td>{value}</td>
+        </tr>
+      );
+    } else {
+      return (
+        <tr>
+          <td>{label}</td>
+          <td>N/A</td>
+        </tr>
+      );
+    }
+  };
+
   if (criminal != null) {
     return (
-      <div>
-        <h1>Criminal</h1>
-        <h2>Name: {criminal.fullName}</h2>
-        <h3>
-          Date of Birth: {new Date(criminal.dateOfBirth).toLocaleDateString()}
-        </h3>
-        <h3>Gender: {criminal.gender}</h3>
-        <h3>Nationality: {criminal.nationality}</h3>
-        <h3>Identification Numbers: {criminal.identificationNumbers}</h3>
-        <h3>Height: {criminal.height}</h3>
-        <h3>Weight: {criminal.weight}</h3>
-        <h3>Hair Color: {criminal.hairColor}</h3>
-        <h3>Eye Color: {criminal.eyeColor}</h3>
-        <h3>Scars, Tattoos, Birthmarks: {criminal.scarsTattoosBirthmarks}</h3>
-        <h3>Address: {criminal.address}</h3>
-        <h3>Phone Numbers: {criminal.phoneNumbers}</h3>
-        <h3>Email Address: {criminal.emailAddress}</h3>
-        <h3>Family Members: {criminal.familyMembers}</h3>
-        <h3>Co-Conspirators: {criminal.coConspirators}</h3>
-        <h3>Description of Crimes: {criminal.descriptionOfCrimes}</h3>
-        <h3>Modus Operandi: {criminal.modusOperandi}</h3>
-        <h3>Locations of Incidents: {criminal.locationsOfIncidents}</h3>
-        <h3>Victim Names: {criminal.victimNames}</h3>
-        <h3>Victim Statements: {criminal.victimStatements}</h3>
-        <h3>Additional Notes: {criminal.additionalNotes}</h3>
-
-        {isImageLoaded && (
-          <img
-            src={image}
-            height="300px"
-            style={{ border: "2px solid black" }}
-            alt="Criminal Image"
-          />
-        )}
-        {!isImageLoaded && <p>Loading Image ...</p>}
-
-        {/* Display links/buttons for PDFs and Image */}
-        <div>
+      <div className="criminal-page">
+        <Sidebar />
+        <div className="criminal-page-container">
+          <div className="criminal-details">
+            <h1>Criminal Details</h1>
+            <table className="criminal-table">
+              <tbody>
+                {renderTableRow("Name:", criminal.fullName)}
+                {renderTableRow(
+                  "Date of Birth:",
+                  new Date(criminal.dateOfBirth).toLocaleDateString()
+                )}
+                {renderTableRow("Gender:", criminal.gender)}
+                {renderTableRow("Nationality:", criminal.nationality)}
+                {renderTableRow(
+                  "Identification Numbers:",
+                  criminal.identificationNumbers
+                )}
+                {renderTableRow("Height:", criminal.height)}
+                {renderTableRow("Weight:", criminal.weight)}
+                {renderTableRow("Hair Color:", criminal.hairColor)}
+                {renderTableRow("Eye Color:", criminal.eyeColor)}
+                {renderTableRow(
+                  "Scars, Tattoos, Birthmarks:",
+                  criminal.scarsTattoosBirthmarks
+                )}
+                {renderTableRow("Address:", criminal.address)}
+                {renderTableRow("Phone Numbers:", criminal.phoneNumbers)}
+                {renderTableRow("Email Address:", criminal.emailAddress)}
+                {renderTableRow("Family Members:", criminal.familyMembers)}
+                {renderTableRow("Co-Conspirators:", criminal.coConspirators)}
+                {renderTableRow(
+                  "Description of Crimes:",
+                  criminal.descriptionOfCrimes
+                )}
+                {renderTableRow("Modus Operandi:", criminal.modusOperandi)}
+                {renderTableRow(
+                  "Locations of Incidents:",
+                  criminal.locationsOfIncidents
+                )}
+                {renderTableRow("Victim Names:", criminal.victimNames)}
+                {renderTableRow(
+                  "Victim Statements:",
+                  criminal.victimStatements
+                )}
+                {renderTableRow("Additional Notes:", criminal.additionalNotes)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="documents">
+          <h1>Image</h1>
+          <div className="criminal-desc-image">
+            {isImageLoaded ? (
+              <img
+                src={image}
+                height="300px"
+                style={{ border: "2px solid black" }}
+                alt="Criminal Image"
+              />
+            ) : (
+              <p>Loading Image ...</p>
+            )}
+          </div>
+          <br />
           <h2>Documents</h2>
+          <br />
           <a href={arrestRecords} target="_blank" rel="noopener noreferrer">
             Arrest Records (PDF)
           </a>
@@ -146,6 +193,7 @@ export default function Criminal() {
             Court Documents (PDF)
           </a>
           <br />
+          <h2>Evidence Photo</h2>
           <img
             src={evidencePhoto}
             height="200px"
@@ -157,7 +205,8 @@ export default function Criminal() {
     );
   } else {
     return (
-      <div>
+      <div className="criminal-page">
+        <Sidebar />
         <h1>Loading ...</h1>
       </div>
     );

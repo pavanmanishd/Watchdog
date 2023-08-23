@@ -12,7 +12,7 @@
   flex-direction: row;
 }
 
-.sidebar {
+/* .sidebar {
   width: 150px;
   min-height: 100vh;
   background-color: #000;
@@ -23,7 +23,7 @@
   margin: 2rem 1rem;
   font-weight: 600;
   color: #fff;
-}
+} */
 
 .encounter-list-container {
   display: flex;

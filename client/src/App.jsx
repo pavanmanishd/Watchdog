@@ -85,10 +85,13 @@ function App() {
         <Route exact path="/encounters">
           <EncounterList />
         </Route>
+        <Route exact path="/encounters/:name/:date/:hr/:min/:sec">
+          <Encounter />
+        </Route>
         <Route exact path="/upload">
           <Upload />
         </Route>
-        <Route exact path="/allcameras">
+        <Route exact path="/cameras">
           <AllCameras />
         </Route>
         <Route exact path="/camera/:id">
@@ -99,9 +102,6 @@ function App() {
         </Route>
         <Route exact path="/criminals/:name">
           <Criminal />
-        </Route>
-        <Route exact path="/encounter/:name/:date/:hr/:min/:sec">
-          <Encounter />
         </Route>
       </Switch>
     </div>
