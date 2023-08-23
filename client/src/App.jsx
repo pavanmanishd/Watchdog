@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route ,useHistory } from "react-router-dom";
+import { Switch, Route, useHistory } from "react-router-dom";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import SignUp from "./components/Signup";
@@ -10,32 +10,47 @@ import AllCameras from "./components/AllCameras";
 import Video_http from "./components/Video_http";
 import CriminalList from "./components/CriminalList";
 import Criminal from "./components/Criminal";
+import NotificationPopup from "./components/NotificationPopup";
+
+import "./styles/NotificationPopup.styles.css";
+
 function App() {
   const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState([]);
   const history = useHistory();
+
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:3001");
 
     ws.onmessage = (event) => {
       console.log("Notification received:", event.data);
-      setNotifications(prev => {
-        //add new notification to the top of the list
-        return [JSON.parse(event.data), ...prev];
-      });
+      const notification = JSON.parse(event.data);
+      setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+      setShowNotifications((prevShowNotifications) => [
+        notification,
+        ...prevShowNotifications,
+      ]);
     };
 
     return () => {
       ws.close();
     };
   }, []);
-  
+
+  const handleCloseNotification = (notification) => {
+    setShowNotifications((prevShowNotifications) =>
+      prevShowNotifications.filter((item) => item !== notification)
+    );
+  };
+
   const handleClick = (notification) => {
-    console.log("Notification clicked:", notification);
     const time = notification.timestamp.split(" ");
-    history.push(`/encounter/${notification.name}/${time[0]}/${time[1].replaceAll(":", "/")}`);
+    history.push(
+      `/encounter/${notification.name}/${time[0]}/${time[1].replaceAll(":", "/")}`
+    );
     window.location.reload();
   };
-  const [isLogged, setIsLogged] = useState(false);
+
   const checkToken = async (token) => {
     const res = await fetch("http://localhost:8000/api/token", {
       headers: {
@@ -45,11 +60,10 @@ function App() {
     const data = await res.json();
     if (data.status === false) {
       localStorage.removeItem("token");
-      history.push("/login"); 
-    } else {
-      setIsLogged(true);
+      history.push("/login");
     }
   };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -58,21 +72,20 @@ function App() {
       history.push("/login");
     }
   }, []);
+
   return (
     <div>
-      <div style={{position:"absolute", bottom:"50px",right:"50px"}}>
-      {notifications.length != 0 && (
-        <div>
-          {notifications.map((notification, index) => (
-            <div key={index} onClick={() => handleClick(notification)}>
-              <p>{notification.name} was detected at {notification.timestamp} near {notification.location} at camera : {notification.camera_id}</p>
-            </div>
-          ))}
-        </div>
-      )
-      }
+      <div>
+        {showNotifications.map((notification, index) => (
+          <NotificationPopup
+            key={index}
+            notification={notification}
+            onClose={() => handleCloseNotification(notification)}
+            onClick={() => handleClick(notification)}
+          />
+        ))}
       </div>
-      
+
       <Switch>
         <Route exact path="/">
           <Home />
@@ -86,24 +99,18 @@ function App() {
         <Route exact path="/encounters">
           <EncounterList />
         </Route>
-        <Route exact path="/encounter/:name/:date/:hr/:min/:sec">
-          <Encounter />
-        </Route>
+        <Route
+          exact
+          path="/encounter/:name/:date/:hr/:min/:sec"
+          component={Encounter}
+        />
         <Route exact path="/upload">
           <Upload />
         </Route>
-        <Route exact path="/cameras">
-          <AllCameras />
-        </Route>
-        <Route exact path="/camera/:id">
-          <Video_http />
-        </Route>
-        <Route exact path="/criminals">
-          <CriminalList />
-        </Route>
-        <Route exact path="/criminals/:name">
-          <Criminal />
-        </Route>
+        <Route exact path="/cameras" component={AllCameras} />
+        <Route exact path="/camera/:id" component={Video_http} />
+        <Route exact path="/criminals" component={CriminalList} />
+        <Route exact path="/criminals/:name" component={Criminal} />
       </Switch>
     </div>
   );

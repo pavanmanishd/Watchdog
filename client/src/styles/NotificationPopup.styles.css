@@ -1,0 +1,24 @@
+/* NotificationPopup.styles.css */
+
+/* Style the notification container */
+.notification-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    max-width: 300px;
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Light text color */
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  
+  /* Add hover effect to notifications */
+  .notification-popup:hover {
+    background-color: #555; /* Darken the background on hover */
+  }
+  
