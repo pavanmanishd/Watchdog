@@ -216,6 +216,79 @@ app.get("/criminals/:name/image", (req, res) => {
     );
 });
 
+app.get("/criminals/:name/arrestRecords", (req, res) => {
+    const name = req.params.name;
+    console.log(name);
+    const arrestRecordsPath = path.join(__dirname, "uploads", `${name}`, "arrestRecords.pdf");
+    console.log(arrestRecordsPath);
+    fs.readFile(arrestRecordsPath, (err, data) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            res.writeHead(200, { 'Content-Type': 'application/pdf' });
+            res.end(data);
+        }
+    }
+    );
+});
+
+app.get("/criminals/:name/chargesOffenses", (req, res) => {
+    const name = req.params.name;
+    console.log(name);
+    const chargesOffensesPath = path.join(__dirname, "uploads", `${name}`, "chargesOffenses.pdf");
+    console.log(chargesOffensesPath);
+    fs.readFile(chargesOffensesPath, (err, data) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            res.writeHead(200, { 'Content-Type': 'application/pdf' });
+            res.end(data);
+        }
+    }
+    );
+});
+
+app.get("/criminals/:name/courtDocuments", (req, res) => {
+    const name = req.params.name;
+    console.log(name);
+    const courtDocumentsPath = path.join(__dirname, "uploads", `${name}`, "courtDocuments.pdf");
+    console.log(courtDocumentsPath);
+    fs.readFile(courtDocumentsPath, (err, data) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            res.writeHead(200, { 'Content-Type': 'application/pdf' });
+            res.end(data);
+        }
+    }
+    );
+});
+
+app.get("/criminals/:name/evidencePhoto", (req, res) => {
+    const name = req.params.name;
+    console.log(name);
+    const evidencePhotoPath = path.join(__dirname, "uploads", `${name}`, "evidencePhoto.jpg");
+    console.log(evidencePhotoPath);
+    fs.readFile(evidencePhotoPath, (err, data) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+            res.end(data);
+        }
+    }
+    );
+});
+
+
 app.post("/criminals", (req, res) => {
     const { fullName, dateOfBirth, gender, nationality, identificationNumbers, height, weight, hairColor, eyeColor, scarsTattoosBirthmarks, address, phoneNumbers, emailAddress, familyMembers, coConspirators, descriptionofCrimes, modusOperandi, locationsOfIncidents, victimNames, victimStatements, additionalNotes } = req.body;
     const sqlInsert = "INSERT INTO CriminalData (fullName,dateOfBirth,gender,nationality,identificationNumbers,height,weight,hairColor,eyeColor,scarsTattoosBirthmarks,address,phoneNumbers,emailAddress,familyMembers,coConspirators,descriptionofCrimes,modusOperandi,locationsOfIncidents,victimNames,victimStatements,additionalNotes) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
