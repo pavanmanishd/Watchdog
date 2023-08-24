@@ -12,6 +12,7 @@ export default function Navbar() {
 
   const handleSearchChange = (event) => {
     setSearchText(event.target.value);
+    history.push(`/search/${event.target.value}`);
   };
 
   const handleSearchSubmit = () => {

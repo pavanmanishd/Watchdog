@@ -4,28 +4,34 @@ import { useParams, useHistory } from "react-router-dom";
 
 export default function Search() {
   const { searchText } = useParams();
-  const terms = searchText.trim().split(" ");
   const [criminals, setCriminals] = useState([]);
   const [encounters, setEncounters] = useState([]);
   const [images, setImages] = useState({});
-  const [encounterState, setEncounterState] = useState(true); // Initialize as true (loading)
-  const [criminalState, setCriminalState] = useState(true); // Initialize as true (loading)
+  const [encounterLoading, setEncounterLoading] = useState(true);
+  const [criminalLoading, setCriminalLoading] = useState(true);
+  const [encounterError, setEncounterError] = useState(null);
+  const [criminalError, setCriminalError] = useState(null);
   const history = useHistory();
 
   useEffect(() => {
+    // Reset the state when terms change
+  const terms = searchText.trim().split(" ");
+    setEncounters([]);
+    setCriminals([]);
+    setImages({});
+    setEncounterLoading(true);
+    setCriminalLoading(true);
+    setEncounterError(null);
+    setCriminalError(null);
+
     if (terms.length === 1 && terms[0].length <= 1) {
-      setCriminalState("No criminals found");
-      setEncounterState("No encounters found");
+      setCriminalLoading(false);
+      setEncounterLoading(false);
       return;
-    } else if (terms.length === 1 && terms[0] === "") {
-      setCriminalState("No criminals found");
-      setEncounterState("No encounters found");
-      return;
-    } else if (terms.length === 1 && terms[0] === " ") {
-      setCriminalState("No criminals found");
-      setEncounterState("No encounters found");
-      return;
-    } else if (terms.length === 1) {
+    }
+
+    // Criminals
+    if (terms.length === 1) {
       const term = terms[0];
       axios
         .get(`http://localhost:3001/criminals/search/${term}`)
@@ -34,58 +40,52 @@ export default function Search() {
           console.log(data);
           setCriminals(data);
           if (data.length === 0) {
-            setCriminalState("No criminals found");
-          } else {
-            setCriminalState(false); // Set it to false after data is loaded
-            data.forEach((criminal) => {
-              fetchImage(criminal.fullName);
-            });
+            setCriminalError("No criminals found");
           }
+          setCriminalLoading(false);
+          data.forEach((criminal) => {
+            fetchImage(criminal.fullName);
+          });
         })
         .catch((error) => {
           console.error("Error fetching criminals:", error);
-          setCriminalState("Error fetching data"); // Handle error state
+          setCriminalError("Error fetching data");
+          setCriminalLoading(false);
         });
     } else {
-      for (let i = 0; i < terms.length; i++) {
-        const term = terms[i];
-        axios
-          .get(`http://localhost:3001/criminals/search/${term}`)
-          .then((response) => {
-            const data = response.data;
-            console.log(data);
-            setCriminals((prevCriminals) => [...prevCriminals, ...data]);
-            if (data.length === 0) {
-              setCriminalState("No criminals found");
-            } else {
-              setCriminalState(false); // Set it to false after data is loaded
-              data.forEach((criminal) => {
-                fetchImage(criminal.fullName);
-              });
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching criminals:", error);
-            setCriminalState("Error fetching data"); // Handle error state
-          });
-      }
-    }
-  }, []);
+      // Handle multiple terms for criminals
+      const requests = terms.map((term) =>
+        axios.get(`http://localhost:3001/criminals/search/${term}`)
+      );
 
-  useEffect(() => {
-    if (terms.length === 1 && terms[0].length <= 1) {
-      setCriminalState("No criminals found");
-      setEncounterState("No encounters found");
-      return;
-    } else if (terms.length === 1 && terms[0] === "") {
-      setCriminalState("No criminals found");
-      setEncounterState("No encounters found");
-      return;
-    } else if (terms.length === 1 && terms[0] === " ") {
-      setCriminalState("No criminals found");
-      setEncounterState("No encounters found");
-      return;
-    } else if (terms.length === 1) {
+      Promise.all(requests)
+        .then((responses) => {
+          let allData = [];
+          responses.forEach((response) => {
+            const data = response.data;
+            allData = [...allData, ...data];
+          });
+
+          if (allData.length === 0) {
+            setCriminalError("No criminals found");
+          }
+
+          setCriminals(allData);
+          setCriminalLoading(false);
+
+          allData.forEach((criminal) => {
+            fetchImage(criminal.fullName);
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching criminals:", error);
+          setCriminalError("Error fetching data");
+          setCriminalLoading(false);
+        });
+    }
+
+    // Encounters
+    if (terms.length === 1) {
       const term = terms[0];
       axios
         .get(`http://localhost:3001/encounters/search/${term}`)
@@ -94,42 +94,50 @@ export default function Search() {
           console.log(data);
           setEncounters(data);
           if (data.length === 0) {
-            setEncounterState("No encounters found");
-          } else {
-            setEncounterState(false); // Set it to false after data is loaded
-            data.forEach((encounter) => {
-              fetchImage(encounter.name);
-            });
+            setEncounterError("No encounters found");
           }
+          setEncounterLoading(false);
+          data.forEach((encounter) => {
+            fetchImage(encounter.name);
+          });
         })
         .catch((error) => {
           console.error("Error fetching encounters:", error);
-          setEncounterState("Error fetching data"); // Handle error state
+          setEncounterError("Error fetching data");
+          setEncounterLoading(false);
         });
     } else {
-      for (let i = 0; i < terms.length; i++) {
-        const term = terms[i];
-        axios
-          .get(`http://localhost:3001/encounters/search/${term}`)
-          .then((response) => {
+      // Handle multiple terms for encounters
+      const requests = terms.map((term) =>
+        axios.get(`http://localhost:3001/encounters/search/${term}`)
+      );
+
+      Promise.all(requests)
+        .then((responses) => {
+          let allData = [];
+          responses.forEach((response) => {
             const data = response.data;
-            setEncounters((prevEncounters) => [...prevEncounters, ...data]);
-            if (data.length === 0) {
-              setEncounterState("No encounters found");
-            } else {
-              setEncounterState(false); // Set it to false after data is loaded
-              data.forEach((encounter) => {
-                fetchImage(encounter.name);
-              });
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching encounters:", error);
-            setEncounterState("Error fetching data"); // Handle error state
+            allData = [...allData, ...data];
           });
-      }
+
+          if (allData.length === 0) {
+            setEncounterError("No encounters found");
+          }
+
+          setEncounters(allData);
+          setEncounterLoading(false);
+
+          allData.forEach((encounter) => {
+            fetchImage(encounter.name);
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching encounters:", error);
+          setEncounterError("Error fetching data");
+          setEncounterLoading(false);
+        });
     }
-  }, []);
+  }, [searchText]);
 
   const fetchImage = async (name) => {
     try {
@@ -157,10 +165,30 @@ export default function Search() {
   };
 
   const handleCriminalClick = (criminal) => {
-    history.push(`/criminal/${criminal.name}`);
+    history.push(`/criminal/${criminal.fullName}`);
   };
 
   const Encounter = () => {
+    if (encounterLoading) {
+      return (
+        <tr className="table-row">
+          <td className="table-data" colSpan="5">
+            Loading...
+          </td>
+        </tr>
+      );
+    }
+
+    if (encounterError) {
+      return (
+        <tr className="table-row">
+          <td className="table-data" colSpan="5">
+            {encounterError}
+          </td>
+        </tr>
+      );
+    }
+
     return (
       <>
         {encounters.map((encounter, index) => {
@@ -193,6 +221,26 @@ export default function Search() {
   };
 
   const Criminal = () => {
+    if (criminalLoading) {
+      return (
+        <tr className="table-row">
+          <td className="table-data" colSpan="5">
+            Loading...
+          </td>
+        </tr>
+      );
+    }
+
+    if (criminalError) {
+      return (
+        <tr className="table-row">
+          <td className="table-data" colSpan="5">
+            {criminalError}
+          </td>
+        </tr>
+      );
+    }
+
     return (
       <>
         {criminals.map((criminal, index) => {
@@ -240,21 +288,7 @@ export default function Search() {
               </tr>
             </thead>
             <tbody>
-              {criminalState === true ? (
-                <tr className="table-row">
-                  <td className="table-data" colSpan="5">
-                    Loading...
-                  </td>
-                </tr>
-              ) : criminalState === "No criminals found" ? (
-                <tr className="table-row">
-                  <td className="table-data" colSpan="5">
-                    No criminals found
-                  </td>
-                </tr>
-              ) : (
-                <Criminal />
-              )}
+              <Criminal />
             </tbody>
           </table>
         </div>
@@ -271,21 +305,7 @@ export default function Search() {
               </tr>
             </thead>
             <tbody>
-              {encounterState === true ? (
-                <tr className="table-row">
-                  <td className="table-data" colSpan="5">
-                    Loading...
-                  </td>
-                </tr>
-              ) : encounterState === "No encounters found" ? (
-                <tr className="table-row">
-                  <td className="table-data" colSpan="5">
-                    No encounters found
-                  </td>
-                </tr>
-              ) : (
-                <Encounter />
-              )}
+              <Encounter />
             </tbody>
           </table>
         </div>
