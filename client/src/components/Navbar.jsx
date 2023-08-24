@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import "../styles/Navbar.styles.css"; // Import your custom CSS file for Navbar styling
-
+import axios from "axios";
 export default function Navbar() {
   const [searchText, setSearchText] = useState("");
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false); // State to manage notification visibility
+  const [userDetails, setUserDetails] = useState(null); // State to store user details
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false); // State to manage profile dropdown visibility
   const history = useHistory(); // Access the React Router history object
 
   const handleSearchChange = (event) => {
@@ -19,19 +21,36 @@ export default function Navbar() {
   const handleNotificationClick = () => {
     // Toggle the visibility of notifications when the notification icon is clicked
     setShowNotifications((prevShowNotifications) => !prevShowNotifications);
+    if (showProfileDropdown) {
+      // Close the profile dropdown if it is open
+      setShowProfileDropdown(false);
+    }
   };
 
   const handleProfileClick = () => {
-    alert("Profile button clicked");
+    // Fetch user details when the profile icon is clicked
+    setShowProfileDropdown(
+      (prevShowProfileDropdown) => !prevShowProfileDropdown
+    );
+    if (showNotifications) {
+      // Close the notifications if they are open
+      setShowNotifications(false);
+    }
   };
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
 
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:3001");
 
     ws.onmessage = (event) => {
       console.log("Notification received:", event.data);
-      const notification = JSON.parse(event.data);
-      setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+      setNotifications((prev) => {
+        //add new notification to the top of the list
+        return [JSON.parse(event.data), ...prev];
+      });
     };
 
     return () => {
@@ -39,22 +58,77 @@ export default function Navbar() {
     };
   }, []);
 
-  const NotificationItem = ({ notification, onClick }) => (
-    <div
-      className="notification-item" // Add this class for styling
-      onClick={() => {
-        onClick(notification);
-      }}
-    >
-      {notification.message}
-    </div>
-  );
+  // Function to fetch user details
+  const fetchUserProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const response = await fetch("http://localhost:8000/user", {
+          headers: {
+            "x-access-token": token,
+          },
+        });
 
+        if (response.status === 200) {
+          const data = await response.json();
+          setUserDetails(data.user); // Set user details in state
+        } else {
+          // Handle error
+          console.error("Failed to fetch user details");
+        }
+      } catch (error) {
+        // Handle error
+        console.error("Error fetching user details:", error);
+      }
+    }
+  };
+
+  // Function to handle logout
+  const handleLogout = () => {
+    axios
+      .get("http://localhost:8000/api/logout", {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          localStorage.removeItem("token");
+          history.push("/login");
+        }
+      })
+      .catch((error) => {
+        console.error("Error logging out:", error);
+      });
+  };
+
+  // Function to handle notification item click
   const handleNotificationItemClick = (notification) => {
     const { encounterName, date, time } = notification;
     const url = `/encounter/${encounterName}/${date}/${time}`;
     history.push(url);
     setShowNotifications(false); // Close the notifications when an item is clicked
+  };
+
+  // Function to render the user profile dropdown
+  const renderUserProfile = () => {
+    if (userDetails) {
+      return (
+        <div className="user-profile">
+          <div className="username">
+            {/* <strong>Username:</strong>  */}@{userDetails.username}
+          </div>
+          <div className="email">
+            {/* <strong>Email:</strong>  */}
+            {userDetails.email}
+          </div>
+          <button onClick={handleLogout} className="logout-button">
+            Logout
+          </button>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -89,11 +163,13 @@ export default function Navbar() {
               <div className="notification-list">
                 {notifications.length > 0 ? (
                   notifications.map((notification, index) => (
-                    <NotificationItem
+                    <div
                       key={index}
-                      notification={notification}
-                      onClick={handleNotificationItemClick}
-                    />
+                      className="notification-item"
+                      onClick={() => handleNotificationItemClick(notification)}
+                    >
+                      {notification.message}
+                    </div>
                   ))
                 ) : (
                   <div className="no-notifications">No notifications</div>
@@ -105,6 +181,9 @@ export default function Navbar() {
             <button className="profile-button" onClick={handleProfileClick}>
               <i className="fa fa-user"></i>
             </button>
+            {showProfileDropdown && (
+              <div className="user-profile-dropdown">{renderUserProfile()}</div>
+            )}
           </div>
         </div>
       </div>
