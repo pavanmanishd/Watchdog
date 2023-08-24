@@ -11,8 +11,12 @@ import Video_http from "./components/Video_http";
 import CriminalList from "./components/CriminalList";
 import Criminal from "./components/Criminal";
 import NotificationPopup from "./components/NotificationPopup";
+import Navbar from "./components/Navbar";
 
 import "./styles/NotificationPopup.styles.css";
+import Search from "./components/Search";
+import Sidebar from "./components/Sidebar";
+import "./App.styles.css"
 
 function App() {
   const [notifications, setNotifications] = useState([]);
@@ -74,7 +78,9 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div className="app-page">
+      <Navbar />
+      <Sidebar />
       <div>
         {showNotifications.map((notification, index) => (
           <NotificationPopup
@@ -111,6 +117,7 @@ function App() {
         <Route exact path="/camera/:id" component={Video_http} />
         <Route exact path="/criminals" component={CriminalList} />
         <Route exact path="/criminals/:name" component={Criminal} />
+        <Route exact path="/search/:searchText" component={Search} />
       </Switch>
     </div>
   );

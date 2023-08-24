@@ -4,7 +4,7 @@
 /* Styles for the CriminalList component */
 .criminal-list-page {
     min-height: 100vh;
-    max-width: 100vw;
+    width: 100vw;
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 

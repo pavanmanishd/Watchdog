@@ -38,21 +38,23 @@
     width: 100%;
     padding: 10px;
     border: none;
-    border-radius: 300px;
+    border-radius: 300px 0px 0px 300px;
     background-color: #000;
     border: 1px solid #fff;
     color: #fff; /* Text color */
     outline: none; /* Remove input outline */
+    border-right: none;
   }
   
   /* Style the search button */
   .search-container button[type="submit"] {
     background-color: #000; /* Darker background color for the button */
-    color: #fff;
+    color: #ffffff;
     border: 1px solid #fff;
-    border-radius: 300px;
-    padding: 10px 10px;
-    margin-left: 1rem;
+    border-left: none;
+    border-radius: 0px 300px 300px 0px;
+    /* padding: 10px 10px; */
+    /* margin-left: 1rem; */
     cursor: pointer;
   }
   

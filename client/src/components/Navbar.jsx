@@ -15,16 +15,16 @@ export default function Navbar() {
   };
 
   const handleSearchSubmit = () => {
-    const searchText = searchText.trim();
-    if (searchText === "") {
-        // Don't redirect if the search text is empty
-        return;
+    console.log("Search text:", searchText);
+    const trimmedSearchText = searchText.trim();
+    if (trimmedSearchText === "") {
+      return;
     }
-    //handle spaces in search text
-    const filteredsearchText = searchText.replaceAll(" ", "%20");
-    // Redirect to the search page when the search button is clicked
-    history.push(`/search/${filteredsearchText}`);
-    };
+    const filteredSearchText = trimmedSearchText.replaceAll(" ", "%20");
+    history.push(`/search/${filteredSearchText}`);
+    window.location.reload();
+  };
+  
 
   const handleNotificationClick = () => {
     // Toggle the visibility of notifications when the notification icon is clicked
@@ -138,6 +138,19 @@ export default function Navbar() {
     }
     return null;
   };
+
+  useEffect(() => {
+    // check if the current route is /login or /signup
+  const isLoginPage = history.location.pathname === "/login";
+  const isSignupPage = history.location.pathname === "/signup";
+  if (isLoginPage || isSignupPage) {
+    // Hide the navbar if the current route is /login or /signup
+    document.querySelector(".navbar-container").style.display = "none";
+  } else {
+    // Show the navbar if the current route is not /login or /signup
+    // document.querySelector(".navbar-container").style.display = "flex";
+  }
+}, [history.location.pathname]);
 
   return (
     <div className="navbar-container">

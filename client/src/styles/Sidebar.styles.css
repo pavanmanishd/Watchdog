@@ -10,14 +10,16 @@
     flex-direction: column;
     align-items: center;
     padding: 20px 1.5rem 0px;
-}
+    position: relative;
+    
+  }
 
 .sidebar-container{
     display: flex;
     flex-direction: column;
     align-items: baseline;
     height: 100vh;
-    position: fixed;
+    position: absolute;
 }
   
   /* Style the sidebar headings (links or buttons) */

@@ -118,12 +118,12 @@ export default function EncounterList() {
   return (
     <div className="encounter-list-page">
       <div className="encounter-main">
-        <div className="sidebar">
+        {/* <div className="sidebar">
           <p className="sidebar-heading">Home</p>
           <p className="sidebar-heading">Criminals</p>
           <p className="sidebar-heading">Encounters</p>
           <p className="sidebar-heading">CCTV</p>
-        </div>
+        </div> */}
         <div className="encounter-list-container">
           <h2 className="encounter-list-title">Encounters</h2>
 
@@ -164,13 +164,13 @@ export default function EncounterList() {
             </select>
 
             {/* Search Input */}
-            <label htmlFor="searchTerm">Search:</label>
+            {/* <label htmlFor="searchTerm">Search:</label>
             <input
               type="text"
               id="searchTerm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            /> */}
 
             {/* <button onClick={(e) => e.preventDefault()}>Filter & Sort</button> */}
           </form>

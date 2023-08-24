@@ -65,10 +65,10 @@ function update_model(image, criminalName) {
 }
 function delete_criminal_model(criminalName) {
     const model_api_url = "http://192.168.0.106:8000/criminal";
-    axios.delete(model_api_url,{
+    axios.delete(model_api_url, {
         criminalName: criminalName
     })
-        .then((response)=>{
+        .then((response) => {
             console.log(response.data);
             const data = response.data.message;
             return data;
@@ -143,7 +143,7 @@ app.get("/cameras", (req, res) => {
     //         res.status(500).send("Error occurred");
     //     }
     //     );
-    
+
     //read file cameras.json
     const camerasPath = path.join(__dirname, "cameras.json");
     fs.readFile(camerasPath, (err, data) => {
@@ -402,7 +402,7 @@ app.delete("/criminal/:name", (req, res) => {
                     return;
                 }
                 else {
-                    const status =  delete_criminal_model(name);
+                    const status = delete_criminal_model(name);
                     console.log(status);
                     res.status(200).send({ "status": "success" })
                 }
@@ -496,8 +496,41 @@ app.get("/encounters/:name/:date/:hr/:min/:sec/image", (req, res) => {
     );
 });
 
+app.get("/criminals/search/:term", (req, res) => {
+    const term = req.params.term;
+    console.log(term);
+    const sqlSelect = `SELECT * FROM CriminalData WHERE fullName LIKE "%${term}%" OR dateOfBirth LIKE "%${term}%" OR height LIKE "%${term}%" OR weight LIKE "%${term}%"`;
+    // console.log(sqlSelect);
+    db.query(sqlSelect, [], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            // console.log(result);
+            res.send(result);
+        }
+    }
+    );
+});
 
-
+app.get("/encounters/search/:term", (req, res) => {
+    const term = req.params.term;
+    console.log(term);
+    const sqlSelect = `SELECT * FROM Encounters WHERE name LIKE "%${term}%" OR timestamp LIKE "%${term}%" OR location LIKE "%${term}%" OR camera_id LIKE "%${term}%"`;
+    // console.log(sqlSelect);
+    db.query(sqlSelect, [], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        else {
+            // console.log(result);
+            res.send(result);
+        }
+    }
+    );
+});
 
 
 server.listen(3001, () => {

@@ -4,7 +4,6 @@ import config from "../config/index";
 import axios from "axios";
 import "../styles/Home.styles.css";
 import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
 
 export default function Home() {
   const [encounters, setEncounters] = useState([]);
@@ -85,7 +84,6 @@ export default function Home() {
 
   return (
     <main className="home-page">
-      <Navbar />
       <div className="home-main">
         {/* <div className="sidebar">
           <p className="sidebar-heading">Home</p>
@@ -94,7 +92,7 @@ export default function Home() {
           <p className="sidebar-heading">CCTV</p>
           {/* <button>Add Criminal</button> */}
         {/* </div> */}
-        <Sidebar />
+        {/* <Sidebar /> */}
         <div className="home-container">
           <p className="home-head">Recent Encounters</p>
           <div className="home-list">

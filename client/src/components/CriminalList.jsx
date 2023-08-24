@@ -26,12 +26,12 @@ export default function CriminalList() {
   return (
     <div className="criminal-list-page">
       <div className="home-main">
-        <div className="sidebar">
+        {/* <div className="sidebar">
           <p className="sidebar-heading">Home</p>
           <p className="sidebar-heading">Criminals</p>
           <p className="sidebar-heading">Encounters</p>
           <p className="sidebar-heading">CCTV</p>
-        </div>
+        </div> */}
         {/* <Sidebar />  */}
         <div className="criminal-list-container">
           <h2 className="criminal-list-title">All Criminals</h2>
