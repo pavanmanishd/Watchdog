@@ -71,8 +71,13 @@ function delete_criminal_model(criminalName) {
         .then((response) => {
             console.log(response.data);
             const data = response.data.message;
-            return data;
+            // return data;
         })
+        .catch((error) => {
+            console.log(error);
+        });
+
+
 }
 
 app.post("/notify", async (req, res) => {
@@ -385,31 +390,63 @@ app.post("/criminals/documents", (req, res) => {
     }
 });
 
-app.delete("/criminal/:name", (req, res) => {
+app.delete("/criminals/:name", (req, res) => {
     const name = req.params.name;
-    const sqlDelete = `Delete from CriminalData where fullName = ?`
+    const sqlDelete = `DELETE FROM CriminalData WHERE fullName = ?`; // Fix the SQL query
     db.query(sqlDelete, [name], (err, result) => {
         if (err) {
             console.log(err);
-            return;
-        }
-        else {
-            console.log(result);
-            const path = path.join(__dirname, "uploads", `${name}`);
-            fs.rmdirSync(path, (err, data) => {
+            return res.status(500).send({ "status": "error" }); // Handle the error
+        } else {
+            const path = require('path'); // Require path module
+            const deletePath = path.join(__dirname, "uploads", name); // Correctly declare path
+            console.log(deletePath);
+
+            // Check if the directory exists before attempting to delete it
+            fs.access(deletePath, (err) => {
                 if (err) {
                     console.log(err);
-                    return;
+                    return res.status(500).send({ "status": "error" }); // Handle the error
                 }
-                else {
-                    const status = delete_criminal_model(name);
-                    console.log(status);
-                    res.status(200).send({ "status": "success" })
-                }
-            })
+
+                // Directory exists, so delete all files first
+                fs.readdir(deletePath, (err, files) => {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).send({ "status": "error" }); // Handle the error
+                    }
+
+                    // Loop through files and delete each one
+                    files.forEach((file) => {
+                        const filePath = path.join(deletePath, file);
+                        fs.unlink(filePath, (err) => {
+                            if (err) {
+                                console.log(err);
+                                return res.status(500).send({ "status": "error" }); // Handle the error
+                            }
+                        });
+                    });
+
+                    // Once all files are deleted, delete the directory itself
+                    fs.rmdir(deletePath, { recursive: true }, (err) => {
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).send({ "status": "error" }); // Handle the error
+                        } else {
+                            delete_criminal_model(name); // Make sure delete_criminal_model exists
+                            // console.log(status);
+                            return res.status(200).send({ "status": "success" }); // Send success response
+                        }
+                    });
+                });
+            });
         }
     });
 });
+
+
+
+
 
 
 

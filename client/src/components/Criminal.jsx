@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useHistory } from "react-router-dom";
 import axios from "axios";
 import "../styles/Criminal.styles.css"; // Import your Criminal styles here
 import Sidebar from "./Sidebar";
@@ -12,7 +12,7 @@ export default function Criminal() {
   const [chargesOffenses, setChargesOffenses] = useState(null);
   const [courtDocuments, setCourtDocuments] = useState(null);
   const [evidencePhoto, setEvidencePhoto] = useState(null);
-
+  const history = useHistory();
   useEffect(() => {
     axios
       .get("http://localhost:3001/criminals/" + name)
@@ -94,6 +94,20 @@ export default function Criminal() {
       });
   }, []);
 
+  const handleDelete = () => {
+    axios
+      .delete("http://localhost:3001/criminals/" + name)
+      .then((response) => {
+        console.log(response);
+        history.push("/criminals");
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+
   const renderTableRow = (label, value) => {
     if (value !== null) {
       return (
@@ -115,10 +129,10 @@ export default function Criminal() {
   if (criminal != null) {
     return (
       <div className="criminal-page">
-        <Sidebar />
         <div className="criminal-page-container">
           <div className="criminal-details">
             <h1>Criminal Details</h1>
+            <button onClick={handleDelete}>Delete Criminal</button>
             <table className="criminal-table">
               <tbody>
                 {renderTableRow("Name:", criminal.fullName)}
