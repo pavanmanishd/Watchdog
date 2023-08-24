@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useHistory } from "react-router-dom";
+import "../styles/Search.styles.css"; // Make sure to import your CSS file
 
 export default function Search() {
   const { searchText } = useParams();
@@ -15,7 +16,7 @@ export default function Search() {
 
   useEffect(() => {
     // Reset the state when terms change
-  const terms = searchText.trim().split(" ");
+    const terms = searchText.trim().split(" ");
     setEncounters([]);
     setCriminals([]);
     setImages({});
@@ -171,8 +172,8 @@ export default function Search() {
   const Encounter = () => {
     if (encounterLoading) {
       return (
-        <tr className="table-row">
-          <td className="table-data" colSpan="5">
+        <tr className="search-table-row">
+          <td className="search-table-data" colSpan="5">
             Loading...
           </td>
         </tr>
@@ -181,8 +182,8 @@ export default function Search() {
 
     if (encounterError) {
       return (
-        <tr className="table-row">
-          <td className="table-data" colSpan="5">
+        <tr className="search-table-row">
+          <td className="search-table-data" colSpan="5">
             {encounterError}
           </td>
         </tr>
@@ -195,24 +196,24 @@ export default function Search() {
           return (
             <tr
               key={index}
-              className="table-row"
+              className="search-table-row"
               onClick={() => handleEncounterClick(encounter)}
             >
-              <td className="table-data">
+              <td className="search-table-data">
                 {images[encounter.name] ? (
                   <img
                     src={images[encounter.name]}
                     alt={`Photo ${encounter.name}`}
-                    className="encounter-image"
+                    className="search-encounter-image"
                   />
                 ) : (
-                  <div className="encounter-image-placeholder"></div>
+                  <div className="search-encounter-image-placeholder"></div>
                 )}
               </td>
-              <td className="table-data">{encounter.name}</td>
-              <td className="table-data">{encounter.timestamp}</td>
-              <td className="table-data">{encounter.location}</td>
-              <td className="table-data">{encounter.camera_id}</td>
+              <td className="search-table-data">{encounter.name}</td>
+              <td className="search-table-data">{encounter.timestamp}</td>
+              <td className="search-table-data">{encounter.location}</td>
+              <td className="search-table-data">{encounter.camera_id}</td>
             </tr>
           );
         })}
@@ -223,8 +224,8 @@ export default function Search() {
   const Criminal = () => {
     if (criminalLoading) {
       return (
-        <tr className="table-row">
-          <td className="table-data" colSpan="5">
+        <tr className="search-table-row">
+          <td className="search-table-data" colSpan="5">
             Loading...
           </td>
         </tr>
@@ -233,8 +234,8 @@ export default function Search() {
 
     if (criminalError) {
       return (
-        <tr className="table-row">
-          <td className="table-data" colSpan="5">
+        <tr className="search-table-row">
+          <td className="search-table-data" colSpan="5">
             {criminalError}
           </td>
         </tr>
@@ -247,24 +248,24 @@ export default function Search() {
           return (
             <tr
               key={index}
-              className="table-row"
+              className="search-table-row"
               onClick={() => handleCriminalClick(criminal)}
             >
-              <td className="table-data">
+              <td className="search-table-data">
                 {images[criminal.fullName] ? (
                   <img
                     src={images[criminal.fullName]}
                     alt={`Photo ${criminal.fullName}`}
-                    className="criminal-image"
+                    className="search-criminal-image"
                   />
                 ) : (
-                  <div className="criminal-image-placeholder"></div>
+                  <div className="search-criminal-image-placeholder"></div>
                 )}
               </td>
-              <td className="table-data">{criminal.fullName}</td>
-              <td className="table-data">{criminal.dateOfBirth}</td>
-              <td className="table-data">{criminal.height}</td>
-              <td className="table-data">{criminal.weight}</td>
+              <td className="search-table-data">{criminal.fullName}</td>
+              <td className="search-table-data">{criminal.dateOfBirth}</td>
+              <td className="search-table-data">{criminal.height}</td>
+              <td className="search-table-data">{criminal.weight}</td>
             </tr>
           );
         })}
@@ -272,19 +273,29 @@ export default function Search() {
     );
   };
 
+  if(encounters.length === 0 && criminals.length === 0) {
+    return (
+      <div className="search-page">
+        <div className="search-page-container">
+          <h2>No results found</h2>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <div className="search-container">
+    <div className="search-page">
+      <div className="search-page-container">
         <div className="search-criminal-container">
           <h2 className="search-criminal-title">Criminals</h2>
           <table className="search-criminal-table">
             <thead>
-              <tr className="table-row">
-                <th className="table-header">Photo</th>
-                <th className="table-header">Name</th>
-                <th className="table-header">Date of Birth</th>
-                <th className="table-header">Height</th>
-                <th className="table-header">Weight</th>
+              <tr className="search-table-row">
+                <th className="search-table-header">Photo</th>
+                <th className="search-table-header">Name</th>
+                <th className="search-table-header">Date of Birth</th>
+                <th className="search-table-header">Height</th>
+                <th className="search-table-header">Weight</th>
               </tr>
             </thead>
             <tbody>
@@ -296,12 +307,12 @@ export default function Search() {
           <h2 className="search-encounter-title">Encounters</h2>
           <table className="search-encounter-table">
             <thead>
-              <tr className="table-row">
-                <th className="table-header">Photo</th>
-                <th className="table-header">Name</th>
-                <th className="table-header">Timestamp</th>
-                <th className="table-header">Location</th>
-                <th className="table-header">Camera ID</th>
+              <tr className="search-table-row">
+                <th className="search-table-header">Photo</th>
+                <th className="search-table-header">Name</th>
+                <th className="search-table-header">Timestamp</th>
+                <th className="search-table-header">Location</th>
+                <th className="search-table-header">Camera ID</th>
               </tr>
             </thead>
             <tbody>

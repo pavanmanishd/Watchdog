@@ -1,0 +1,162 @@
+/* Import the font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* Apply styles to the search page */
+.search-page {
+    min-height: 100vh;
+    width: 100vw;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #222222; /* Background color */
+    color: #fff; /* Text color */
+}
+
+/* Apply styles to the main container */
+.search-page-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 3rem;
+    /* margin: 0 10px; */
+    /* padding: 0 1rem; */
+}
+
+/* Apply styles to the criminal container */
+.search-criminal-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-right: 2rem;
+}
+
+/* Apply styles to the encounter container */
+.search-encounter-container {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Apply styles to section titles */
+.search-criminal-title,
+.search-encounter-title {
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin: 2rem 0 2rem 1rem;
+}
+
+/* Apply styles to the criminal table */
+.search-criminal-table {
+    width: 100%;
+    display: table;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #ddd;
+    margin-bottom: 1rem;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: hidden;
+    margin :0 1rem;
+}
+
+/* Apply styles to the encounter table */
+.search-encounter-table {
+    width: 100%;
+    display: table;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #ddd;
+    margin :0 auto 1rem;
+    /* margin-bottom: 1rem; */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: hidden;
+}
+
+/* Apply styles to table headers */
+.search-table-header {
+    padding: 1rem;
+    text-align: center;
+    cursor: default;
+    font-weight: 600;
+    color: #fff;
+    background-color: #000;
+}
+
+.search-table-header:first-child {
+    margin-left: 1rem;
+    text-align: left;
+}
+
+/* Apply styles to table rows */
+.search-table-row {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+    cursor: pointer;
+    background-color: #222222; /* Row background color */
+    padding: 0.5rem; /* Reduce row height */
+}
+
+/* Apply styles to table cells */
+.search-table-data {
+    display: table-cell;
+    vertical-align: inherit;
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    color: #fff; /* Text color */
+}
+
+/* Apply styles to the first cell in each row */
+.search-table-data:first-child {
+    margin-left: 1rem;
+    text-align: left;
+}
+
+/* Apply styles to the criminal and encounter images */
+.search-criminal-image,
+.search-encounter-image {
+    height: 60px; /* Reduce image height */
+    object-fit: cover;
+}
+
+/* Apply styles to the image placeholders */
+.search-criminal-image-placeholder,
+.search-encounter-image-placeholder {
+    width: 60px; /* Reduce placeholder size */
+    height: 60px;
+    background-color: #333; /* Placeholder background color */
+}
+
+/* Apply responsive styles */
+@media screen and (max-width: 600px) {
+    /* Hide table headers on small screens */
+    .search-table-header {
+        display: none;
+    }
+
+    /* Adjust table row and cell styles for small screens */
+    .search-table-row {
+        margin-bottom: 0.5rem; /* Reduce row margin */
+        display: block;
+        border: 1px solid #ddd;
+    }
+
+    .search-table-data {
+        display: block;
+        text-align: right;
+        font-size: 13px;
+        border-bottom: 1px dotted #ddd;
+        padding: 0.5rem; /* Reduce cell padding */
+    }
+
+    .search-table-data::before {
+        content: attr(data-label);
+        float: left;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    /* Remove bottom border for the last cell in each row on small screens */
+    .search-table-data:last-child {
+        border-bottom: 0;
+    }
+}
