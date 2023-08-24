@@ -92,6 +92,104 @@ app.get("/api/token", (req, res) => {
     }
 });
 
+app.get("/api/logout", (req, res) => {
+    const token = req.headers['x-access-token'];
+    // console.log(token)
+    if (!token) {
+        res.json({ status: false, message: 'No token provided' });
+    }
+    else {
+        jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+            if (err) {
+                res.json({ status: false, message: 'Failed to authenticate token', token: null });
+            }
+            else {
+                const email = decoded.email;
+                const sqlUpdate = 'UPDATE UsersAuth SET token = ? WHERE email = ?';
+                db.query(sqlUpdate, [null, email], (err, result) => {
+                    if (err) {
+                        res.json({ status: false, message: 'Failed to authenticate token', token: null });
+                    }
+                    else {
+                        res.json({ status: true, message: 'Success', token: null });
+                    }
+                }
+                );
+            }
+        });
+    }
+});
+
+app.get("/user", (req, res) => {
+    const token = req.headers['x-access-token'];
+    // console.log(token)
+    if (!token) {
+        res.json({ status: false, message: 'No token provided' });
+    }
+    else {
+        jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+            if (err) {
+                res.json({ status: false, message: 'Failed to authenticate token', token: null });
+            }
+            else {
+                const email = decoded.email;
+                const sqlSelect = 'SELECT * FROM UsersAuth WHERE email = ?';
+                db.query(sqlSelect, [email], (err, result) => {
+                    if (err) {
+                        res.json({ status: false, message: 'Failed to authenticate token', token: null });
+                    }
+                    else {
+                        res.json({ status: true, message: 'Success', user: result[0] });
+                    }
+                }
+                );
+            }
+        });
+    }
+});
+
+app.post("/user", (req, res) => {
+    const token = req.headers['x-access-token'];
+    // console.log(token)
+    if (!token) {
+        res.json({ status: false, message: 'No token provided' });
+    }
+    else {
+        jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+            if (err) {
+                res.json({ status: false, message: 'Failed to authenticate token', token: null });
+            }
+            else {
+                const email = decoded.email;
+                const { username, password, newpassword } = req.body;
+                const sqlSelect = 'SELECT * FROM UsersAuth WHERE email = ? AND password = ?';
+                db.query(sqlSelect, [email, password], (err, result) => {
+                    if (err) {
+                        res.json({ status: false, message: 'Failed to authenticate token', token: null });
+                    }
+                    else {
+                        if (result.length == 0) {
+                            res.json({ status: false, message: 'Failed to authenticate token', token: null });
+                        }
+                        else {
+                            const sqlUpdate = 'UPDATE UsersAuth SET username = ?, password = ? WHERE email = ?';
+                            db.query(sqlUpdate, [username, newpassword, email], (err, result) => {
+                                if (err) {
+                                    res.json({ status: false, message: 'Failed to authenticate token', token: null });
+                                }
+                                else {
+                                    res.json({ status: true, message: 'Success', token: null });
+                                }
+                            }
+                            );
+                        }
+                    }
+                }
+                );
+            }
+        });
+    }
+});
 
 
 app.listen(8000, () => console.log('Server listening on port 8000!'));
