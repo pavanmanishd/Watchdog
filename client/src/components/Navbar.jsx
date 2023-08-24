@@ -15,8 +15,16 @@ export default function Navbar() {
   };
 
   const handleSearchSubmit = () => {
-    alert("Search for: " + searchText);
-  };
+    const searchText = searchText.trim();
+    if (searchText === "") {
+        // Don't redirect if the search text is empty
+        return;
+    }
+    //handle spaces in search text
+    const filteredsearchText = searchText.replaceAll(" ", "%20");
+    // Redirect to the search page when the search button is clicked
+    history.push(`/search/${filteredsearchText}`);
+    };
 
   const handleNotificationClick = () => {
     // Toggle the visibility of notifications when the notification icon is clicked
