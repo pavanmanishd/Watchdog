@@ -340,6 +340,27 @@ app.get("/criminals/:name/evidencePhoto", (req, res) => {
 
 app.post("/criminals", (req, res) => {
     const { fullName, dateOfBirth, gender, nationality, identificationNumbers, height, weight, hairColor, eyeColor, scarsTattoosBirthmarks, address, phoneNumbers, emailAddress, familyMembers, coConspirators, descriptionofCrimes, modusOperandi, locationsOfIncidents, victimNames, victimStatements, additionalNotes } = req.body;
+    if(fullName=='') fullName = null;
+    if(dateOfBirth=='') dateOfBirth = null;
+    if(gender == '') gender = null;
+    if(nationality=='')nationality =null;
+    if(identificationNumbers=='')identificationNumbers =null;
+    if(height=='')height =null;
+    if(weight=='')weight =null;
+    if(hairColor=='')hairColor =null;
+    if(eyeColor=='')eyeColor =null;
+    if(scarsTattoosBirthmarks=='')scarsTattoosBirthmarks =null;
+    if(address=='')address =null;
+    if(phoneNumbers=='')phoneNumbers =null;
+    if(emailAddress=='')emailAddress =null;
+    if(familyMembers=='')familyMembers =null;
+    if(coConspirators=='')coConspirators =null;
+    if(descriptionofCrimes=='')descriptionofCrimes =null;
+    if(modusOperandi=='')modusOperandi =null;
+    if(locationsOfIncidents=='')locationsOfIncidents =null;
+    if(victimNames=='')victimNames =null;
+    if(victimStatements=='')victimStatements =null;
+    if(additionalNotes=='')additionalNotes =null;
     const sqlInsert = "INSERT INTO CriminalData (fullName,dateOfBirth,gender,nationality,identificationNumbers,height,weight,hairColor,eyeColor,scarsTattoosBirthmarks,address,phoneNumbers,emailAddress,familyMembers,coConspirators,descriptionofCrimes,modusOperandi,locationsOfIncidents,victimNames,victimStatements,additionalNotes) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     db.query(sqlInsert, [fullName, dateOfBirth, gender, nationality, identificationNumbers, height, weight, hairColor, eyeColor, scarsTattoosBirthmarks, address, phoneNumbers, emailAddress, familyMembers, coConspirators, descriptionofCrimes, modusOperandi, locationsOfIncidents, victimNames, victimStatements, additionalNotes], (err, result) => {
         if (err) {
@@ -400,7 +421,7 @@ app.post("/criminals/documents", (req, res) => {
     }
 });
 
-app.delete("/criminals/:name", (req, res) => {
+app.delete("/criminals/:name", (req, res) => {  
     const name = req.params.name;
     const sqlDelete = `DELETE FROM CriminalData WHERE fullName = ?`; // Fix the SQL query
     db.query(sqlDelete, [name], (err, result) => {
@@ -466,6 +487,57 @@ app.delete("/criminals/:name", (req, res) => {
 
 
 
+app.post("/ipfs", (req, res) => {
+    const IPFS_IP = process.env.IPFS_IP;
+    axios.post(IPFS_IP, req.body)
+        .then((response) => {
+            console.log(response.data);
+            const data = response.data;
+            res.status(200).send(data);
+        }
+        )
+        .catch((error) => {
+            console.log(error);
+            res.status(500).send("Error occurred");
+        }
+        );
+});
+
+app.get("/ipfs/:hash", (req, res) => {
+    const hash = req.params.hash;
+    const IPFS_IP = process.env.IPFS_IP;
+    axios.get(`${IPFS_IP}/${hash}`)
+        .then((response) => {
+            console.log(response.data);
+            const data = response.data;
+            res.status(200).send(data);
+
+        }
+        )
+        .catch((error) => {
+            console.log(error);
+            res.status(500).send("Error occurred");
+        }
+        );
+});
+
+app.get("/ipfs/:hash/image", (req, res) => {
+    const hash = req.params.hash;
+    const IPFS_IP = process.env.IPFS_IP;
+    axios.get(`${IPFS_IP}/${hash}`)
+        .then((response) => {
+            console.log(response.data);
+            const data = response.data;
+            res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+            res.end(data);
+        }
+        )
+        .catch((error) => {
+            console.log(error);
+            res.status(500).send("Error occurred");
+        }
+        );
+});
 
 
 
