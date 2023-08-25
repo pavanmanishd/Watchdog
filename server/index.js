@@ -345,8 +345,8 @@ app.post("/criminals", (req, res) => {
     if(gender == '') gender = null;
     if(nationality=='')nationality =null;
     if(identificationNumbers=='')identificationNumbers =null;
-    if(height=='')height =null;
-    if(weight=='')weight =null;
+    // if(height=='')height =null;
+    // if(weight=='')weight =null;
     if(hairColor=='')hairColor =null;
     if(eyeColor=='')eyeColor =null;
     if(scarsTattoosBirthmarks=='')scarsTattoosBirthmarks =null;
@@ -660,6 +660,46 @@ app.get("/encounters/search/:term", (req, res) => {
     }
     );
 });
+
+
+
+app.get("/ipfs",(req,res)=>{
+    const IpfsHash = "QmNqAVwjkzLAmQLeaPwA2tqfMGFiGKjYqeqHmTw7Pp3UZx"
+    axios.get("http://localhost:5000/data/"+IpfsHash)
+        .then((response)=>{
+            console.log(response.data);
+            res.json(JSON.parse(response.data));
+        })
+        .catch((err)=>{
+            console.log(err);
+            res.json({status:false});
+        })
+})
+
+app.post("/ipfs", async (req, res) => {
+    const { name } = req.body; // Retrieve name and image from request body
+    console.log(name);
+    try {
+        const response = await fetch("http://localhost:5000/data", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                image
+            })
+        });
+
+        const responseData = await response.json();
+        res.send(responseData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: "false" });
+    }
+    res.send(name);
+});
+
 
 
 server.listen(3001, () => {
