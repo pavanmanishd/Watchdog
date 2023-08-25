@@ -1,3 +1,5 @@
+
+
 import express from 'express';
 import ipfsHelper from './ipfsHelper.js'; // Correct the import path
 import { handleUploadFile } from './uploadService.js'; // Correct the import path
@@ -77,6 +79,35 @@ app.post('/process-image', async (req, res) => {
   }
 });
 
+// GET reqest API to retrieve data from IPFS
+app.get('/retrieve-data/:criminalId', async (req, res) => {
+  try {
+    const { criminalId } = req.params;
+
+    // Retrieve data from your smart contract (if needed)
+    // ...
+
+    // Retrieve data from IPFS using the CIDs
+    const evidenceCID = "your_evidence_cid"; // Replace with actual CID
+    const photographCID = "your_photograph_cid"; // Replace with actual CID
+    const caseFileCID = "your_casefile_cid"; // Replace with actual CID
+
+    const evidenceData = await handleRetrieveDataFromIPFS(evidenceCID);
+    const photographData = await handleRetrieveDataFromIPFS(photographCID);
+    const caseFileData = await handleRetrieveDataFromIPFS(caseFileCID);
+
+    res.status(200).json({
+      evidenceData,
+      photographData,
+      caseFileData
+    });
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).json({ error: 'An error occurred while retrieving data.' });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
