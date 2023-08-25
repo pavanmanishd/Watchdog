@@ -64,6 +64,42 @@ app.post('/login', (req, res) => {
     });
 });
 
+app.get('/verify/:password', (req, res) => {
+    const token = req.headers['x-access-token'];
+    // console.log(token)
+    if (!token) {
+        res.json({ status: false, message: 'No token provided' });
+    }
+    else {
+        jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+            if (err) {
+                res.json({ status: false, message: 'Failed to authenticate token', token: null });
+            }
+            else {
+                const password = req.params.password;
+                // console.log(password);
+                const email = decoded.email;
+                const sqlSelect = 'SELECT * FROM UsersAuth WHERE email = ? AND password = ?';
+                db.query(sqlSelect, [email, password], (err, result) => {
+                    if (err) {
+                        res.json({ status: false, message: 'Failed to authenticate token', token: null });
+                    }
+                    else {
+                        if (result.length == 0) {
+                            res.json({ status: false, message: 'Failed to authenticate token', token: null });
+                        }
+                        else {
+                            console.log(result);
+                            res.json({ status: true, message: 'Success', token: result[0].token });
+                        }
+                    }
+                }
+                );
+            }
+        });
+    }
+});
+
 app.get("/api/token", (req, res) => {
     const token = req.headers['x-access-token'];
     // console.log(token)

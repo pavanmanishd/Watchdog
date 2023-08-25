@@ -29,7 +29,7 @@ export default function AllCameras() {
 
   return (
     <div className="cameras-page">
-      <Sidebar />
+      {/* <Sidebar /> */}
       <div className="all-cameras-container">
         <h1 className="page-title">All Cameras</h1>
         <div className="cameras-list">

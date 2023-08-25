@@ -44,20 +44,21 @@
   } */
   /* Add styles for the "Add Criminal" button */
 .sidebar-button {
-    margin: 20px auto;
+    margin: 0px auto;
     padding: 10px 20px;
-    background-color: #333;
+    background-color: #00b545;
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 300px;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    /* transition: background-color 0.3s, color 0.3s; */
     text-align: center;
     text-decoration: none; /* Remove underlines from links if needed */
   }
   
   .sidebar-button:hover {
-    background-color: #555; /* Darken the button on hover */
+    background-color: #00b646; /* Darken the button on hover */
+
   }
 
   .sidebar-button:active {

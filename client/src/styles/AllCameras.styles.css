@@ -3,16 +3,17 @@
 .cameras-page{
     display: flex;
     font-family: "Plus Jakarta Sans", sans-serif;
+    width: 100vw;
 }
 
 .all-cameras-container {
     width: 100%;
-    margin: 0 auto;
+    margin: 4rem auto;
     min-height: 100vh;
 
     font-family: "Plus Jakarta Sans", sans-serif;
     padding: 20px;
-    background-color: #111; /* Dark background color */
+    /* background-color: #111; Dark background color */
     color: #fff; /* Light text color */
   }
   

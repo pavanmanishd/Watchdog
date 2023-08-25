@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { useParams,useHistory } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import axios from "axios";
 import "../styles/Criminal.styles.css"; // Import your Criminal styles here
 import Sidebar from "./Sidebar";
+
 export default function Criminal() {
   const { name } = useParams();
   const [criminal, setCriminal] = useState(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [image, setImage] = useState(null);
+  const [password, setPassword] = useState("");
+  const [isPasswordCorrect, setIsPasswordCorrect] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [arrestRecords, setArrestRecords] = useState(null);
   const [chargesOffenses, setChargesOffenses] = useState(null);
   const [courtDocuments, setCourtDocuments] = useState(null);
   const [evidencePhoto, setEvidencePhoto] = useState(null);
   const history = useHistory();
+
   useEffect(() => {
     axios
       .get("http://localhost:3001/criminals/" + name)
@@ -95,18 +100,50 @@ export default function Criminal() {
   }, []);
 
   const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+  const handlePasswordSubmit = () => {
+    const token = localStorage.getItem("token");
+  
+    if (!token) {
+      // Handle the case where the token is not available.
+      // You might want to redirect the user to the login page or take appropriate action.
+      return;
+    }
+  
     axios
-      .delete("http://localhost:3001/criminals/" + name)
+      .get("http://localhost:8000/verify/"+password, {
+        headers: {
+          "x-access-token": token,
+        },
+      })
       .then((response) => {
-        console.log(response);
-        history.push("/criminals");
-        window.location.reload();
+        if (response.data.status) {
+          axios
+            .delete("http://localhost:3001/criminals/" + name, {
+              headers: {
+                "x-access-token": token, // Send the token for the delete request as well
+              },
+            })
+            .then((response) => {
+              console.log(response);
+              history.push("/criminals");
+              window.location.reload();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          setPassword("");
+          setIsPasswordCorrect(false);
+        }
       })
       .catch((error) => {
         console.log(error);
       });
   };
-
+  
+  
 
   const renderTableRow = (label, value) => {
     if (value !== null) {
@@ -132,7 +169,25 @@ export default function Criminal() {
         <div className="criminal-page-container">
           <div className="criminal-details">
             <h1>Criminal Details</h1>
-            <button onClick={handleDelete}>Delete Criminal</button>
+            <button onClick={handleDelete} className="delete-criminal-button">Delete Criminal</button>
+
+            {showDeleteModal && (
+              <div className="password-modal">
+                <div><span onClick={() => {setShowDeleteModal(false);setIsPasswordCorrect(true);}}>x</span></div>
+                <h2>Confirm Deletion</h2>
+                <input
+                  type="password"
+                  placeholder="Enter Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button onClick={handlePasswordSubmit}>Submit</button>
+                {isPasswordCorrect === false && (
+                  <p className="error-message">Incorrect password.</p>
+                )}
+              </div>
+            )}
+
             <table className="criminal-table">
               <tbody>
                 {renderTableRow("Name:", criminal.fullName)}

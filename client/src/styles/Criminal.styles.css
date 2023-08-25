@@ -1,121 +1,208 @@
 /* Criminal.styles.css */
-
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100,400;500;600;700;800&display=swap");
 .criminal-page {
-    display: flex;
-    min-height: 100vh;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    color: #fff;
-    background-color: #222222;
-    /* padding: 2rem; */
-  }
-  
-  .criminal-page-container {
-    width: 100%;
-    margin: 7rem 2rem;
-  }
-  
+  display: flex;
+  min-height: 100vh;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #fff;
+  background-color: #222222;
+  /* padding: 2rem; */
+}
+
+.criminal-page-container {
+  width: 100%;
+  margin: 7rem 2rem;
+}
+
+.criminal-details {
+  flex: 1;
+  background-color: #222222;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  /* width: 70vw; */
+}
+
+.criminal-details h1 {
+  font-weight: 800;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.criminal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.criminal-table td {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.criminal-table td:first-child {
+  width: 30%;
+  font-weight: 800;
+}
+
+.criminal-desc-image {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: auto;
+}
+
+.criminal-image img {
+  height: 300px;
+  width: auto;
+  max-width: 100%;
+  border: 2px solid #000;
+}
+
+.documents {
+  margin-top: 2rem;
+  margin-right: 2rem;
+}
+
+.documents h2 {
+  font-weight: 800;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.documents a {
+  display: block;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.documents a:hover {
+  text-decoration: underline;
+}
+
+.documents img {
+  /* height: 300px; */
+  /* width: auto; */
+  /* max-width: 100%; */
+  /* border: 2px solid #000; */
+  margin-right: 10px;
+}
+
+@media screen and (max-width: 600px) {
   .criminal-details {
-    flex: 1;
-    background-color: #222222;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-    /* width: 70vw; */
-  }
-  
-  .criminal-details h1 {
-    font-weight: 800;
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .criminal-table {
+    margin: 0;
     width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 2rem;
-  }
-  
-  .criminal-table td {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #fff;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .criminal-table td:first-child {
-    width: 30%;
-    font-weight: 800;
-  }
-  
-  .criminal-desc-image {
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    height: auto;
-  }
-  
-  .criminal-image img {
-    height: 300px;
-    width: auto;
-    max-width: 100%;
-    border: 2px solid #000;
-  }
-  
-  .documents {
-    margin-top: 2rem;
-    margin-right: 2rem;
-  }
-  
-  .documents h2 {
-    font-weight: 800;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-  
-  .documents a {
-    display: block;
-    margin-bottom: 1rem;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 600;
-  }
-  
-  .documents a:hover {
-    text-decoration: underline;
   }
 
-    .documents img {
-      /* height: 300px; */
-      /* width: auto; */
-      /* max-width: 100%; */
-      /* border: 2px solid #000; */
-      margin-right: 10px;
-    }
-  
-  @media screen and (max-width: 600px) {
-    .criminal-details {
-      margin: 0;
-      width: 100%;
-    }
-  
-    .criminal-details h1 {
-      font-size: 1.8rem;
-    }
-  
-    .criminal-table {
-      margin-bottom: 1rem;
-    }
-  
-    .criminal-table td {
-      font-size: 1rem;
-      padding: 0.5rem;
-    }
-  
-    .criminal-image {
-      justify-content: center;
-    }
+  .criminal-details h1 {
+    font-size: 1.8rem;
   }
-  
+
+  .criminal-table {
+    margin-bottom: 1rem;
+  }
+
+  .criminal-table td {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+
+  .criminal-image {
+    justify-content: center;
+  }
+}
+
+.password-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #000;
+  padding: 20px 50px 30px;
+  border-radius: 10px;
+}
+
+.password-modal h2 {
+  color: #fff;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+/* div , h2, input,button*/
+
+.password-modal input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #222222;
+}
+
+/* while typing in the input field, the text color is red, and the border color is red */
+.password-modal input:focus {
+  outline: none;
+  border: 1px solid red;
+  color: red;
+}
+
+.password-modal button {
+  /* width: 100%; */
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #222222;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.password-modal button:hover {
+  background-color: red;
+}
+
+.password-modal div {
+  text-align: right;
+  width: 100%;
+  margin-left: 20px;
+}
+
+.password-modal span {
+  font-weight: 100;
+  color: #fff;
+  text-align: right;
+  width: 100%;
+  margin-top: 0%;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+
+.error-message{
+  color:red;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.delete-criminal-button{
+  background-color: red;
+  color: #fff;
+  border: none;
+  border-radius: 300px;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.delete-criminal-button:hover{
+  background-color: #ba0000;
+}

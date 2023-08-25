@@ -142,14 +142,15 @@ export default function Navbar() {
 
   useEffect(() => {
     // check if the current route is /login or /signup
-  const isLoginPage = history.location.pathname === "/login";
-  const isSignupPage = history.location.pathname === "/signup";
+  const isLoginPage = history.location.pathname === "/login" || history.location.pathname === "/login/";
+  const isSignupPage = history.location.pathname === "/signup" || history.location.pathname === "/signup/";
+  const isUploadPage = history.location.pathname === "/upload" || history.location.pathname === "/upload/";
   if (isLoginPage || isSignupPage) {
     // Hide the navbar if the current route is /login or /signup
     document.querySelector(".navbar-container").style.display = "none";
-  } else {
-    // Show the navbar if the current route is not /login or /signup
-    // document.querySelector(".navbar-container").style.display = "flex";
+  } 
+  if(isUploadPage){
+    document.querySelector(".search-container").style.display = "none";
   }
 }, [history.location.pathname]);
 

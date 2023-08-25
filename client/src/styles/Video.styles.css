@@ -36,10 +36,11 @@
 
 
   .video-card {
-    background-color: #333; /* Dark card background color */
+    /* background-color: #333; Dark card background color */
     padding: 15px;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    margin-top: 5rem;
     display: flex;
     flex-direction: column;
     align-items: center;

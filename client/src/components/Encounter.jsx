@@ -89,7 +89,7 @@ export default function Encounter() {
 
   return (
     <div className="encounter-page">
-      <Sidebar />
+      {/* <Sidebar /> */}
       <div className="encounter-page-container">
         <div className="encounter-container">
           <div className="encounter-details">
@@ -146,6 +146,7 @@ export default function Encounter() {
                 height="300px"
                 style={{ border: "2px solid black" }}
                 alt="Criminal Image"
+                className="prediction-image"
               />
             )}
           </div>

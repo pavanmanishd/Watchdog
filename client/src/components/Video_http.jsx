@@ -34,7 +34,7 @@ export default function Video_http({ url, index }) {
     <>
       {camera != null ? (
         <div className="cameras-page">
-          <Sidebar />
+          {/* <Sidebar /> */}
         <div className="video-card">
           <h2 className="camera-name">{camera.name}</h2>
           <p className="camera-location">{camera.location}</p>
