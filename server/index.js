@@ -41,21 +41,25 @@ wss.on("connection", (ws) => {
 
 // send criminal data to model
 function update_model(image, criminalName) {
-    const model_api_url = "http://192.168.0.106:8000/criminal";
-    axios.post(model_api_url, {
-        image: image,
+    const model_api_url = `${process.env.MODEL_IP}/criminal`;
+    console.log(model_api_url, criminalName);
+    const imageBase64 = Buffer.from(image.data).toString('base64');
+    const formData = {
+        image: imageBase64,
         criminalName: criminalName
-    })
+    }
+    axios.post(model_api_url,
+        formData,
+    
+    )
         .then((response) => {
             console.log(response.data);
-            const data = response.data.message;
-            // const message = `Criminal data sent to model: ${data}`;
-            // console.log(message);
-            // wss.clients.forEach((client) => {
-            //     if (client.readyState === WebSocket.OPEN) {
-            //         client.send(message);
-            //     }
-            // });
+            const data = response.data.status;
+            if(response.status == 200){
+                console.log("Criminal data updated");
+            } else {
+                console.log("Error updating criminal data");
+            }
             return data;
         }
         )
@@ -64,7 +68,7 @@ function update_model(image, criminalName) {
         });
 }
 function delete_criminal_model(criminalName) {
-    const model_api_url = "http://192.168.0.106:8000/criminal";
+    const model_api_url = `${process.env.MODEL_IP}/criminal`;
     axios.delete(model_api_url, {
         criminalName: criminalName
     })
@@ -79,6 +83,9 @@ function delete_criminal_model(criminalName) {
 
 
 }
+
+app.get('/', (req, res) => res.send('Hello World!'));
+
 
 app.post("/notify", async (req, res) => {
     try {
@@ -383,7 +390,7 @@ app.post("/criminals/documents", (req, res) => {
 
         update_model(photograph, name);
 
-        res.send("Files saved");
+        res.status(200).send("Files saved");
     } catch (error) {
         console.error("Error saving files:", error);
         res.status(500).send("Error saving files");

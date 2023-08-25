@@ -25,6 +25,7 @@ const Sidebar = () => {
           className="sidebar-heading"
           onClick={() => {
             history.push("/");
+            window.location.reload();
           }}
         >
           Home

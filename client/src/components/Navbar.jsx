@@ -113,8 +113,9 @@ export default function Navbar() {
 
   // Function to handle notification item click
   const handleNotificationItemClick = (notification) => {
-    const { encounterName, date, time } = notification;
-    const url = `/encounter/${encounterName}/${date}/${time}`;
+    const { name,timestamp,location,camera_id } = notification;
+    const times = timestamp.split(" "); 
+    const url = `/encounter/${name}/${times[0]}/${times[1].replaceAll(":","/")}`;
     history.push(url);
     setShowNotifications(false); // Close the notifications when an item is clicked
   };
@@ -150,7 +151,7 @@ export default function Navbar() {
     document.querySelector(".navbar-container").style.display = "none";
   } 
   if(isUploadPage){
-    document.querySelector(".search-container").style.display = "none";
+    document.querySelector(".navbar-container").style.display = "none";
   }
 }, [history.location.pathname]);
 
@@ -191,7 +192,7 @@ export default function Navbar() {
                       className="notification-item"
                       onClick={() => handleNotificationItemClick(notification)}
                     >
-                      {notification.message}
+                      Suspected Encountered : {notification.name}
                     </div>
                   ))
                 ) : (

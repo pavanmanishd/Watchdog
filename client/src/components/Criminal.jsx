@@ -262,13 +262,13 @@ export default function Criminal() {
             Court Documents (PDF)
           </a>
           <br />
-          <h2>Evidence Photo</h2>
+          {/* <h2>Evidence Photo</h2>
           <img
             src={evidencePhoto}
             height="200px"
             style={{ border: "2px solid black" }}
             alt="Evidence Photo"
-          />
+          /> */}
         </div>
       </div>
     );

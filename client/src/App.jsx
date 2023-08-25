@@ -29,6 +29,7 @@ function App() {
     ws.onmessage = (event) => {
       console.log("Notification received:", event.data);
       const notification = JSON.parse(event.data);
+      console.log(notification)
       setNotifications((prevNotifications) => [notification, ...prevNotifications]);
       setShowNotifications((prevShowNotifications) => [
         notification,
