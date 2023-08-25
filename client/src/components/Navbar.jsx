@@ -103,7 +103,8 @@ export default function Navbar() {
       .then((response) => {
         if (response.status === 200) {
           localStorage.removeItem("token");
-          history.push("/login");
+          // history.push("/login");
+          window.location.reload();
         }
       })
       .catch((error) => {

@@ -68,14 +68,17 @@ function update_model(image, criminalName) {
         });
 }
 function delete_criminal_model(criminalName) {
-    const model_api_url = `${process.env.MODEL_IP}/criminal`;
-    axios.delete(model_api_url, {
-        criminalName: criminalName
-    })
+    const model_api_url = `${process.env.MODEL_IP}/criminal/delete`;
+    const formData = {
+        criminalName : criminalName
+    }
+    axios.post(model_api_url, formData)
         .then((response) => {
             console.log(response.data);
             const data = response.data.message;
-            // return data;
+            if(response.status == 200) console.log("Criminal deleted successfully");
+            else console.log("Error deleting criminal data");
+            return data;
         })
         .catch((error) => {
             console.log(error);
@@ -442,7 +445,17 @@ app.delete("/criminals/:name", (req, res) => {
                         } else {
                             delete_criminal_model(name); // Make sure delete_criminal_model exists
                             // console.log(status);
-                            return res.status(200).send({ "status": "success" }); // Send success response
+                            const sqlDelete2 = `DELETE FROM Encounters WHERE name = ?`; // Fix the SQL query
+                            db.query(sqlDelete2, [name], (err, result) => {
+                                if (err) {
+                                    console.log(err);
+                                    return res.status(500).send({ "status": "error" }); // Handle the error
+                                } else {
+                                    console.log(result);
+                                    return res.status(200).send({ "status": "success" }); // Handle the success
+                                }
+                            }
+                            );  
                         }
                     });
                 });

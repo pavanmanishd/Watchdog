@@ -74,6 +74,7 @@ body{
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 1rem;
     font-weight: 400;
+    color: #fff;
 }
 
 .group .input:focus{

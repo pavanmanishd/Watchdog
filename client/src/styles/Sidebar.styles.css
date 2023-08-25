@@ -46,8 +46,8 @@
 .sidebar-button {
     margin: 0px auto;
     padding: 10px 20px;
-    background-color: #00b545;
-    color: #fff;
+    background-color: #68D391;
+    color: #000;
     border: none;
     border-radius: 300px;
     cursor: pointer;
@@ -57,7 +57,7 @@
   }
   
   .sidebar-button:hover {
-    background-color: #00b646; /* Darken the button on hover */
+    background-color: #68D391; /* Darken the button on hover */
 
   }
 

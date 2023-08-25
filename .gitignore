@@ -24,6 +24,7 @@ todo.txt
 /server/cameras.json
 /server/uploads
 /server/encounters
+/server/cam.txt
 
 AI/encounters/
 AI/face_recog/
