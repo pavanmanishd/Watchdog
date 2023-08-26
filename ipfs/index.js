@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios')
-const fetch = require('node-fetch');
+// const fetch = require('node-fetch');
 const FormData = require('form-data');
 const dotenv = require('dotenv')
 dotenv.config()
@@ -26,9 +26,15 @@ const JWT = process.env.JWT;
 
 app.get("/data/:IpfsHash", (req, res) => {
     const { IpfsHash } = req.params;
-    console.log(IpfsHash);
-    fetch("https://ipfs.io/ipfs/" + IpfsHash)
-        .then((response) => response.json())
+    const ipfsUrl = "https://ipfs.io/ipfs/" + IpfsHash;
+
+    fetch(ipfsUrl)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
         .then((json) => {
             res.status(200).json(json);
         })
@@ -38,10 +44,11 @@ app.get("/data/:IpfsHash", (req, res) => {
         });
 });
 
+
 app.post("/data", async (req, res) => {
     const { name, image } = req.body;
-    const pinataContent = image; // Assuming image is already in the correct format
     const formData = new FormData();
+    const pinataContent = image; // Assuming image is already in the correct format
     formData.append('pinataContent', pinataContent);
 
     const pinataMetadata = JSON.stringify({
@@ -55,19 +62,31 @@ app.post("/data", async (req, res) => {
     formData.append('pinataOptions', pinataOptions);
 
     try {
-        const result = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+        const response = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+            method: "POST",
+            body: formData,
             headers: {
-                'Authorization': `Bearer ${JWT}`
+                'Authorization': `Bearer ${JWT}`,
+                'Content-Type': `multipart/form-data; boundary=${formData._boundary}`
+                // Add other necessary headers for multipart form data if needed
             }
         });
 
-        console.log(result.data);
-        res.json(result.data);
+        if (response.ok) {
+            const result = await response.json();
+            console.log(result);
+            res.status(200).json(result.IpfsHash);
+        } else {
+            console.error("Error while uploading to IPFS:", response.statusText);
+            res.status(500).json({ status: "false" });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ status: "false" });
     }
 });
+
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}...`);

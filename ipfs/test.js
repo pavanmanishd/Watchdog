@@ -8,7 +8,7 @@ const JWT = process.env.JWT
 
 const pinFileToIPFS = async () => {
     const formData = new FormData();
-    const src = "./image.jpg";
+    const src = "./pavan.jpg";
     
     const file = fs.createReadStream(src)
     formData.append('file', file)
@@ -41,10 +41,13 @@ const pinFileToIPFS = async () => {
     }
 }
 
-pinFileToIPFS()
+// pinFileToIPFS()
 
 
-// const getData = () => {
-//     // https://ipfs.io/ipfs/hash
+const getData = async () => {
+    // https://ipfs.io/ipfs/hash
+    const res = await axios.get("https://ipfs.io/ipfs/QmUdDWekcCJNfBhi8ke72U67WeRjaWWVVT8xCErAt4Z27x");
+    console.log(res.data);
+}
 
-// }
+getData()
