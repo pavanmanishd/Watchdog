@@ -8,6 +8,7 @@ const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const mysql = require('mysql2');
+const FormData = require('form-data')
 
 require('dotenv').config();
 const app = express();
@@ -50,12 +51,12 @@ function update_model(image, criminalName) {
     }
     axios.post(model_api_url,
         formData,
-    
+
     )
         .then((response) => {
             console.log(response.data);
             const data = response.data.status;
-            if(response.status == 200){
+            if (response.status == 200) {
                 console.log("Criminal data updated");
             } else {
                 console.log("Error updating criminal data");
@@ -70,13 +71,13 @@ function update_model(image, criminalName) {
 function delete_criminal_model(criminalName) {
     const model_api_url = `${process.env.MODEL_IP}/criminal/delete`;
     const formData = {
-        criminalName : criminalName
+        criminalName: criminalName
     }
     axios.post(model_api_url, formData)
         .then((response) => {
             console.log(response.data);
             const data = response.data.message;
-            if(response.status == 200) console.log("Criminal deleted successfully");
+            if (response.status == 200) console.log("Criminal deleted successfully");
             else console.log("Error deleting criminal data");
             return data;
         })
@@ -340,27 +341,27 @@ app.get("/criminals/:name/evidencePhoto", (req, res) => {
 
 app.post("/criminals", (req, res) => {
     const { fullName, dateOfBirth, gender, nationality, identificationNumbers, height, weight, hairColor, eyeColor, scarsTattoosBirthmarks, address, phoneNumbers, emailAddress, familyMembers, coConspirators, descriptionofCrimes, modusOperandi, locationsOfIncidents, victimNames, victimStatements, additionalNotes } = req.body;
-    if(fullName=='') fullName = null;
-    if(dateOfBirth=='') dateOfBirth = null;
-    if(gender == '') gender = null;
-    if(nationality=='')nationality =null;
-    if(identificationNumbers=='')identificationNumbers =null;
+    if (fullName == '') fullName = null;
+    if (dateOfBirth == '') dateOfBirth = null;
+    if (gender == '') gender = null;
+    if (nationality == '') nationality = null;
+    if (identificationNumbers == '') identificationNumbers = null;
     // if(height=='')height =null;
     // if(weight=='')weight =null;
-    if(hairColor=='')hairColor =null;
-    if(eyeColor=='')eyeColor =null;
-    if(scarsTattoosBirthmarks=='')scarsTattoosBirthmarks =null;
-    if(address=='')address =null;
-    if(phoneNumbers=='')phoneNumbers =null;
-    if(emailAddress=='')emailAddress =null;
-    if(familyMembers=='')familyMembers =null;
-    if(coConspirators=='')coConspirators =null;
-    if(descriptionofCrimes=='')descriptionofCrimes =null;
-    if(modusOperandi=='')modusOperandi =null;
-    if(locationsOfIncidents=='')locationsOfIncidents =null;
-    if(victimNames=='')victimNames =null;
-    if(victimStatements=='')victimStatements =null;
-    if(additionalNotes=='')additionalNotes =null;
+    if (hairColor == '') hairColor = null;
+    if (eyeColor == '') eyeColor = null;
+    if (scarsTattoosBirthmarks == '') scarsTattoosBirthmarks = null;
+    if (address == '') address = null;
+    if (phoneNumbers == '') phoneNumbers = null;
+    if (emailAddress == '') emailAddress = null;
+    if (familyMembers == '') familyMembers = null;
+    if (coConspirators == '') coConspirators = null;
+    if (descriptionofCrimes == '') descriptionofCrimes = null;
+    if (modusOperandi == '') modusOperandi = null;
+    if (locationsOfIncidents == '') locationsOfIncidents = null;
+    if (victimNames == '') victimNames = null;
+    if (victimStatements == '') victimStatements = null;
+    if (additionalNotes == '') additionalNotes = null;
     const sqlInsert = "INSERT INTO CriminalData (fullName,dateOfBirth,gender,nationality,identificationNumbers,height,weight,hairColor,eyeColor,scarsTattoosBirthmarks,address,phoneNumbers,emailAddress,familyMembers,coConspirators,descriptionofCrimes,modusOperandi,locationsOfIncidents,victimNames,victimStatements,additionalNotes) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     db.query(sqlInsert, [fullName, dateOfBirth, gender, nationality, identificationNumbers, height, weight, hairColor, eyeColor, scarsTattoosBirthmarks, address, phoneNumbers, emailAddress, familyMembers, coConspirators, descriptionofCrimes, modusOperandi, locationsOfIncidents, victimNames, victimStatements, additionalNotes], (err, result) => {
         if (err) {
@@ -375,7 +376,7 @@ app.post("/criminals", (req, res) => {
     );
 });
 
-app.post("/criminals/documents", (req, res) => {
+app.post("/criminals/documents", async (req, res) => {
     try {
         const name = req.body.fullName;
         const photograph = req.files.photograph;
@@ -414,6 +415,47 @@ app.post("/criminals/documents", (req, res) => {
 
         update_model(photograph, name);
 
+        const formData = new FormData();
+        const src = path.join(recordsPath, "image.jpg");
+
+
+        const file = fs.createReadStream(src)
+        formData.append('file', file)
+  
+        const pinataMetadata = JSON.stringify({
+            name: 'File name',
+        });
+        formData.append('pinataMetadata', pinataMetadata);
+
+        const pinataOptions = JSON.stringify({
+            cidVersion: 0,
+        })
+        formData.append('pinataOptions', pinataOptions);
+
+        try {
+            const result = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", (formData), {
+                headers: {
+                    'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
+                    'Authorization': `Bearer ${process.env.JWT}`
+                }
+            });
+            console.log(result.data.IpfsHash);
+            const storeDB = 'Insert into ipfs (name,hash) values (?,?)'
+            db.query(storeDB, [name,result.data.IpfsHash], (err, dbresult) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                else {
+                    console.log(dbresult);
+                    // res.send("Values inserted");
+                }
+            }
+            );
+        } catch (error) {
+            console.log(error);
+        }
+
         res.status(200).send("Files saved");
     } catch (error) {
         console.error("Error saving files:", error);
@@ -421,7 +463,7 @@ app.post("/criminals/documents", (req, res) => {
     }
 });
 
-app.delete("/criminals/:name", (req, res) => {  
+app.delete("/criminals/:name", (req, res) => {
     const name = req.params.name;
     const sqlDelete = `DELETE FROM CriminalData WHERE fullName = ?`; // Fix the SQL query
     db.query(sqlDelete, [name], (err, result) => {
@@ -476,7 +518,7 @@ app.delete("/criminals/:name", (req, res) => {
                                     return res.status(200).send({ "status": "success" }); // Handle the success
                                 }
                             }
-                            );  
+                            );
                         }
                     });
                 });
@@ -663,16 +705,16 @@ app.get("/encounters/search/:term", (req, res) => {
 
 
 
-app.get("/ipfs",(req,res)=>{
+app.get("/ipfs", (req, res) => {
     const IpfsHash = "QmNqAVwjkzLAmQLeaPwA2tqfMGFiGKjYqeqHmTw7Pp3UZx"
-    axios.get("http://localhost:5000/data/"+IpfsHash)
-        .then((response)=>{
+    axios.get("http://localhost:5000/data/" + IpfsHash)
+        .then((response) => {
             console.log(response.data);
             res.json(JSON.parse(response.data));
         })
-        .catch((err)=>{
+        .catch((err) => {
             console.log(err);
-            res.json({status:false});
+            res.json({ status: false });
         })
 })
 
