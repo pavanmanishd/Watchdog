@@ -528,66 +528,6 @@ app.delete("/criminals/:name", (req, res) => {
 });
 
 
-
-app.post("/ipfs", (req, res) => {
-    const IPFS_IP = process.env.IPFS_IP;
-    axios.post(IPFS_IP, req.body)
-        .then((response) => {
-            console.log(response.data);
-            const data = response.data;
-            res.status(200).send(data);
-        }
-        )
-        .catch((error) => {
-            console.log(error);
-            res.status(500).send("Error occurred");
-        }
-        );
-});
-
-app.get("/ipfs/:hash", (req, res) => {
-    const hash = req.params.hash;
-    const IPFS_IP = process.env.IPFS_IP;
-    axios.get(`${IPFS_IP}/${hash}`)
-        .then((response) => {
-            console.log(response.data);
-            const data = response.data;
-            res.status(200).send(data);
-
-        }
-        )
-        .catch((error) => {
-            console.log(error);
-            res.status(500).send("Error occurred");
-        }
-        );
-});
-
-app.get("/ipfs/:hash/image", (req, res) => {
-    const hash = req.params.hash;
-    const IPFS_IP = process.env.IPFS_IP;
-    axios.get(`${IPFS_IP}/${hash}`)
-        .then((response) => {
-            console.log(response.data);
-            const data = response.data;
-            res.writeHead(200, { 'Content-Type': 'image/jpeg' });
-            res.end(data);
-        }
-        )
-        .catch((error) => {
-            console.log(error);
-            res.status(500).send("Error occurred");
-        }
-        );
-});
-
-
-
-
-
-
-
-
 app.get("/encounters", (req, res) => {
     const sqlSelect = 'SELECT * FROM Encounters ORDER BY timestamp DESC';
     db.query(sqlSelect, (err, result) => {
@@ -706,7 +646,7 @@ app.get("/encounters/search/:term", (req, res) => {
 
 
 app.get("/ipfs", (req, res) => {
-    const IpfsHash = "QmNqAVwjkzLAmQLeaPwA2tqfMGFiGKjYqeqHmTw7Pp3UZx"
+    const IpfsHash = "QmUdDWekcCJNfBhi8ke72U67WeRjaWWVVT8xCErAt4Z27x"
     axios.get("http://localhost:5000/data/" + IpfsHash)
         .then((response) => {
             console.log(response.data);
