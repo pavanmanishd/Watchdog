@@ -23,6 +23,13 @@ def start_data_loader():
     print('[INFO] Started data_loader')
     logging.info('Started data_loader')
 
+def start_model():
+    print("[INFO] Starting model...")
+    logging.info('Starting model...')
+    os.system("python camera_model.py")
+    print('[INFO] Started model')
+    logging.info('Started model')
+
 def start_notifier():
     print("[INFO] Starting notifier...")
     logging.info('Starting notifier...')
@@ -30,12 +37,6 @@ def start_notifier():
     print('[INFO] Started notifier')
     logging.info('Started notifier')
 
-def start_model():
-    print("[INFO] Starting model...")
-    logging.info('Starting model...')
-    os.system("python camera_model.py")
-    print('[INFO] Started model')
-    logging.info('Started model')
 
 if __name__ == "__main__":
     server_process = multiprocessing.Process(target=start_server)
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     model_process = multiprocessing.Process(target=start_model)
     model_process.start()
 
-    print('END')
+    # print('END')
 
     while True:
         continue

@@ -14,14 +14,13 @@ import logging
 
 HOST = '192.168.0.106'
 PORT = 8090
-FPS = 60
+FPS = 30
 IMG_WIDTH = 640
 IMG_HEIGHT = 480
 DATE_FORMAT = "%Y%m%d_%H%M%S_%f"
 DATABASE_UPDATING = Lock()
 THREADS_PER_CAMERA = 2
 
-# logging.basicConfig(filename='model.log', format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.DEBUG, encoding='utf-8')
 logging.basicConfig(
     filename = 'model.log',
     # encoding = 'utf-8',
@@ -76,9 +75,9 @@ class Model(object):
                     print('[INFO] Model updated')
                     logging.info('Model updated')
                     size = new_size
+                time.sleep(1)
         except:
             pass
-        time.sleep(1)
 
     def update(self):
         with open('known_faces.txt', 'r') as f:
@@ -117,21 +116,6 @@ class Model(object):
         else:
             return False, frame, encounter_details
 
-
-class Stream():
-    def __init__(self):
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((HOST, PORT))
-        self.server.listen(1)
-        print('[INFO] Stream server started at', HOST, PORT)
-        logging.info('Stream server started at %s %s', HOST, PORT)
-        self.conn, self.addr = self.server.accept()
-        print('[INFO] Stream client connected at', self.addr)
-        logging.info('Stream client connected at %s', self.addr)
-
-    def send(self, data):
-        self.conn.send(data)
-
 class Camera(object):
     def __init__(self, details:dict, camera_buffer:Queue=None):
         self.url = int(details['url'])
@@ -152,34 +136,16 @@ class Camera(object):
         
     def update(self, camera_buffer:Queue=None):
         while True:
-            if self.capture.isOpened():
-                (self.status, self.frame) = self.capture.read()
-                if camera_buffer:
-                    camera_buffer.put((datetime.now().strftime(DATE_FORMAT)[:-3], self.frame))
-                    camera_buffer.task_done()
-            
-    def show_frames(self):
-        while True:
             try:
-                cv2.imshow('Camera'+str(self.url), self.frame)
-                cv2.waitKey(self.FPS_MS)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    self.capture.release()
-                    cv2.destroyAllWindows()
-                    exit(0)
+                if self.capture.isOpened():
+                    (self.status, self.frame) = self.capture.read()
+                    self.frame = cv2.resize(self.frame, (IMG_WIDTH, IMG_HEIGHT))
+                    if camera_buffer:
+                        camera_buffer.put((datetime.now().strftime(DATE_FORMAT)[:-3], self.frame))
+                        camera_buffer.task_done()
+                    cv2.waitKey(self.FPS_MS)
             except:
-                pass
-
-    def show_frames_thread(self):
-        while True:
-            try:
-                cv2.imshow('Camera '+str(self.url), self.frame)
-                cv2.waitKey(self.FPS_MS)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    cv2.destroyAllWindows()
-                    exit(0)
-            except:
-                pass
+                continue
 
 class Network_Camera(object):
     def __init__(self, details:dict, camera_buffer:Queue=None):
@@ -204,42 +170,9 @@ class Network_Camera(object):
                 if camera_buffer:
                     camera_buffer.put((datetime.now().strftime(DATE_FORMAT)[:-3], self.frame))
                     camera_buffer.task_done()
+                cv2.waitKey(self.FPS_MS)
             except:
                 continue
-
-    def show_frames(self):
-        while True:
-            try:
-                cv2.imshow('Network Camera'+self.url, self.frame)
-                cv2.waitKey(self.FPS_MS)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    cv2.destroyAllWindows()
-                    exit(0)
-            except:
-                pass
-
-    def show_frames_thread(self):
-        while True:
-            try:
-                cv2.imshow('Network Camera '+self.url, self.frame)
-                cv2.waitKey(self.FPS_MS)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    cv2.destroyAllWindows()
-                    exit(0)
-            except:
-                pass 
-
-class Threaded_Cameras():
-    def __init__(self, cameras:dict):
-        self.n = len(cameras)
-        self.cameras = [Network_Camera(cameras[i]) if i=='Network' else Camera(cameras[i]) for i in cameras]
-        self.threads = [Thread(target=self.cameras[i].show_frames_thread, args=()) for i in range(self.n)]
-        for thread in self.threads:
-            thread.daemon = True
-            thread.start()
-    
-    def get_cameras(self):
-        return self.cameras
 
 class DataBase():
     def __init__(self):
@@ -261,7 +194,7 @@ class DataBase():
                 print('[INFO] Retrying again...')
                 logging.info('Retrying again...')
         
-    def insert(self, file_name, encounter_details):
+    def insert_encounter(self, file_name, encounter_details):
         with self.connection.cursor() as cursor: 
             for encounter in encounter_details:
                 query = 'insert into encounters values(:name, :confidence, :timestamp, :image, :camerasocketurl, :location, :camera_id)'
@@ -276,7 +209,7 @@ class DataBase():
                 }
                 values["timestamp"] = values["timestamp"].strftime('%d-%b-%Y %H:%M:%S')
                 cursor.execute(query, values)
-            self.connection.commit()
+        self.connection.commit()
 
 class Threaded_Model():
     def __init__(self, cameras: dict):
@@ -316,10 +249,13 @@ class Threaded_Model():
 
         print('[INFO] Starting frame processing...')
         logging.info('Starting frame processing...')
-        self.frame_process_threads = [Thread(target=self.process_frames, args=(i%self.n,)) for i in range(self.n * THREADS_PER_CAMERA)]
-        for thread in self.frame_process_threads:
-            thread.daemon = True
-            thread.start()
+        # self.frame_process_threads = [Thread(target=self.process_frames, args=(i%self.n,)) for i in range(self.n * THREADS_PER_CAMERA)]
+        # for thread in self.frame_process_threads:
+        #     thread.daemon = True
+        #     thread.start()
+        self.frame_process_thread = Thread(target=self.process_frames)
+        self.frame_process_thread.daemon = True
+        self.frame_process_thread.start()
 
         print('[INFO] Starting frame saving...')
         logging.info('Starting frame saving...')
@@ -328,18 +264,19 @@ class Threaded_Model():
         self.show_frames_thread.start()
 
 
-    def process_frames(self, camera_index:int):
-        model = self.models[camera_index]
+    def process_frames(self):
         while True:
-            try:
-                encounter_time, frame = self.camera_buffers[camera_index].get(block=False)
-                with DATABASE_UPDATING:
-                    found, frame, encounter_details = model.recognize_faces(frame, encounter_time=encounter_time, camerasocketurl=self.cameras[camera_index].url, location=self.cameras[camera_index].location, camera_id = self.cameras[camera_index].camera_id)
-                if found:
-                    self.processed_buffers[camera_index].put((encounter_time, frame, encounter_details))
-                self.camera_buffers[camera_index].task_done()
-            except:
-                continue
+            for camera_index in range(self.n):
+                try:
+                    model = self.models[camera_index]
+                    encounter_time, frame = self.camera_buffers[camera_index].get(block=False)
+                    with DATABASE_UPDATING:
+                        found, frame, encounter_details = model.recognize_faces(frame, encounter_time=encounter_time, camerasocketurl=self.cameras[camera_index].url, location=self.cameras[camera_index].location, camera_id = self.cameras[camera_index].camera_id)
+                    if found:
+                        self.processed_buffers[camera_index].put((encounter_time, frame, encounter_details))
+                    self.camera_buffers[camera_index].task_done()
+                except:
+                    continue
 
     def save_frames(self):
         while True:
@@ -349,7 +286,10 @@ class Threaded_Model():
                     self.processed_buffers[i].task_done()
                     file_name = self.camera_names[i] + '_' + str(encounter_time)
                     cv2.imwrite('encounters/' + file_name + '.jpg', frame)
-                    Thread(target=self.db.insert, args=(file_name, encounter_details)).start()
+                    print('[INFO] Encounter saved to encounters/' + file_name + '.jpg')
+                    logging.info('Encounter saved to encounters/%s.jpg', file_name)
+                    # Thread(target=self.db.insert_encounter, args=(file_name, encounter_details)).start()
+                    self.db.insert_encounter(file_name, encounter_details)
                 except:
                     pass
 

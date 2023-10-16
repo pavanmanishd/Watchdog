@@ -72,7 +72,6 @@ class Database:
         return results
 
 
-
 def clear_encounters():
     global previous_encounters
     while True:
@@ -89,11 +88,11 @@ def send_encounters(encounters_list):
             # print("Other criminals in the image:", other_persons)
             for other_person in other_persons:
                 if other_person[0] not in previous_encounters.keys():
-                    previous_encounters[other_person[0]] = [encounter, encounters_list[encounter]['criminals'][0]["camera_id"]]
+                    previous_encounters[other_person[0]] = [encounter, [encounters_list[encounter]['criminals'][0]["camera_id"]]]
                     encounters_list[encounter]['criminals'].append(db.get_person_details(other_person[0], encounter))
                 else:
-                    if previous_encounters[other_person[0]][1] != encounters_list[encounter]['criminals'][0]["camera_id"]:
-                        previous_encounters[other_person[0]] = [encounter, encounter_list[encounter]['criminals'][0]["camera_id"]]
+                    if encounters_list[encounter]['criminals'][0]["camera_id"] not in previous_encounters[other_person[0]][1]:
+                        previous_encounters[other_person[0]][1].append(encounters_list[encounter]['criminals'][0]["camera_id"])
                         encounters_list[encounter]['criminals'].append(db.get_person_details(other_person[0], encounter))
             image = cv2.imread('encounters/' + encounter + '.jpg')
             image_data = cv2.imencode('.jpg', image)[1].tobytes()
@@ -145,20 +144,20 @@ if __name__ == "__main__":
             for encounter in encounters:
                 encounter_details = dict(zip(column_names, encounter))
                 if encounter_details["name"] not in previous_encounters.keys():
-                    previous_encounters[encounter_details["name"]] = [encounter_details["image"], encounter_details["camera_id"]]
+                    previous_encounters[encounter_details["name"]] = [encounter_details["image"], [encounter_details["camera_id"]]]
                     temp = dict()
                     temp['criminals'] = [encounter_details]
                     encounter_list[encounter_details['image']] = temp
                 else:
-                    if previous_encounters[encounter_details["name"]][1] != encounter_details["camera_id"]:
-                        previous_encounters[encounter_details["name"]] = [encounter_details["image"], encounter_details["camera_id"]]
+                    if encounter_details["camera_id"] not in previous_encounters[encounter_details["name"]][1]:
+                        previous_encounters[encounter_details["name"]][1].append(encounter_details["camera_id"])
                         temp = dict()
                         temp['criminals'] = [encounter_details]
                         encounter_list[encounter_details['image']] = temp
 
             if len(encounter_list) > 0:
-                # print("Encounters:", encounter_list)
-                # print("Previous encounters:", previous_encounters)
+                print("Encounters:", encounter_list)
+                print("Previous encounters:", previous_encounters)
                 send_encounters(encounter_list)
         
         time.sleep(1)
