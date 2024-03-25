@@ -1,6 +1,8 @@
-# Watchdog
+# Gods Eye
 
-## Security Surviellance System using AI ( Hacktopia-2k23 )
+*Reference: The project name "Gods Eye" is inspired by the surveillance system featured in the "Fast and Furious" movie franchise, capable of locating any given person at great distances.*
+
+## Security Surviellance System using AI
 
 
 ## Project Description
